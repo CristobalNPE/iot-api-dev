@@ -1,12 +1,13 @@
 package talento.futuro.iotapidev.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
@@ -19,15 +20,12 @@ public class DataSourceConfig {
     private final Environment environment;
 
     @Bean
-    DataSource dataSource() {
-        DriverManagerDataSource dmds = new DriverManagerDataSource();
-        dmds.setDriverClassName(environment.getProperty("driver"));
-        dmds.setUrl(environment.getProperty("url"));
-        dmds.setUsername(environment.getProperty("dbUser"));
-        dmds.setPassword(environment.getProperty("dbPassword"));
-        return dmds;
+    public DataSource dataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(environment.getRequiredProperty("driver"));
+        config.setJdbcUrl(environment.getRequiredProperty("url"));
+        config.setUsername(environment.getRequiredProperty("dbUser"));
+        config.setPassword(environment.getRequiredProperty("dbPassword"));
+        return new HikariDataSource(config);
     }
-
-
-
 }
