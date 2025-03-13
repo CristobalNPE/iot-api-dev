@@ -6,6 +6,7 @@ target/
 
 !.env.example
 *.env
+digest.txt
 
 ### STS ###
 .apt_generated
