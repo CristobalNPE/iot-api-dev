@@ -24,7 +24,6 @@ public class SensorData {
     @Column(name = "timestamp", nullable = false)
     private Long timestamp;
 
-    //TODO
-
-
+    @Column(name = "sensor_data", columnDefinition = "jsonb")
+    private String data;
 }
