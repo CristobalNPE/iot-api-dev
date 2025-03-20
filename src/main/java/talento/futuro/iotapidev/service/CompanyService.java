@@ -10,9 +10,9 @@ import talento.futuro.iotapidev.exception.CompanyNotFoundException;
 import talento.futuro.iotapidev.mapper.CompanyMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
+import talento.futuro.iotapidev.util.ApiKeyGenerator;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -21,11 +21,15 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+    private final ApiKeyGenerator apiKeyGenerator;
 
     public CompanyResponse createCompany(@Valid CompanyRequest request) {
 
-        String apiKey = UUID.randomUUID().toString().replace("-", "");
-        Company company = new Company(null, request.companyName(), apiKey);
+        Company company = Company.builder()
+                                 .name(request.companyName())
+                                 .apiKey(apiKeyGenerator.generateApiKey())
+                                 .build();
+
         company = companyRepository.save(company);
 
         return companyMapper.toResponse(company);

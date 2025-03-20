@@ -14,5 +14,4 @@ public class CompanyMapper {
                 company.getApiKey()
         );
     }
-
 }
