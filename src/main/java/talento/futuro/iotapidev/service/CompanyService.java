@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
 import talento.futuro.iotapidev.exception.CompanyNotFoundException;
+import talento.futuro.iotapidev.mapper.CompanyMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final CompanyMapper companyMapper;
 
     public CompanyResponse createCompany(@Valid CompanyRequest request) {
 
@@ -26,19 +28,19 @@ public class CompanyService {
         Company company = new Company(null, request.companyName(), apiKey);
         company = companyRepository.save(company);
 
-        return new CompanyResponse(company.getId(), company.getName(), company.getApiKey());
+        return companyMapper.toResponse(company);
 
     }
 
     public List<CompanyResponse> getAll() {
         return companyRepository.findAll().stream()
-                                .map(c -> new CompanyResponse(c.getId(), c.getName(), c.getApiKey()))
+                                .map(companyMapper::toResponse)
                                 .toList();
     }
 
     public CompanyResponse getById(Integer id) {
         return companyRepository.findById(id)
-                                .map(c -> new CompanyResponse(c.getId(), c.getName(), c.getApiKey()))
+                                .map(companyMapper::toResponse)
                                 .orElseThrow(() -> new CompanyNotFoundException(id));
     }
 
@@ -56,7 +58,7 @@ public class CompanyService {
         company.setName(request.companyName());
         company = companyRepository.save(company);
 
-        return new CompanyResponse(company.getId(), company.getName(), company.getApiKey());
+        return companyMapper.toResponse(company);
     }
 
 }
