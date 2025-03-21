@@ -9,6 +9,7 @@ import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.exception.CompanyNotFoundException;
 import talento.futuro.iotapidev.exception.DuplicatedLocationException;
+import talento.futuro.iotapidev.exception.LocationNotFoundException;
 import talento.futuro.iotapidev.mapper.LocationMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.model.Location;
@@ -59,6 +60,36 @@ public class LocationService {
         return locationMapper.toLocationResponse(saved);
     }
 
+    public LocationResponse updateLocationForCompany(Integer locationId, @Valid LocationRequest request) {
+
+        Location location = getLocationForCompany(locationId);
+
+        location.setName(request.name());
+        location.setCity(request.city());
+        location.setCountry(request.country());
+        location.setMeta(request.meta());
+
+        return locationMapper.toLocationResponse(locationRepository.save(location));
+    }
+
+    public void deleteLocationForCompany(Integer locationId) {
+        Location location = getLocationForCompany(locationId);
+        locationRepository.deleteById(location.getId());
+    }
+
+    public LocationResponse findLocationByIdForCompany(Integer locationId) {
+        Location location = getLocationForCompany(locationId);
+        return locationMapper.toLocationResponse(location);
+    }
+
+    private Location getLocationForCompany(Integer locationId) {
+
+        Integer companyId = getCompanyIdFromContext();
+
+        return locationRepository.findByIdAndCompanyId(locationId, companyId)
+                                 .orElseThrow(() -> new LocationNotFoundException(locationId));
+    }
+
     private void validateRequest(@Valid LocationRequest request) {
 
         if (locationRepository.existsByName(request.name())) {
@@ -67,7 +98,6 @@ public class LocationService {
 
 
     }
-
 
     private Integer getCompanyIdFromContext() {
         ApiKeyAuthentication authentication =

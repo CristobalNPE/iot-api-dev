@@ -22,11 +22,29 @@ public class LocationController {
         return locationService.findAllLocationsForCurrentCompany();
     }
 
+    @GetMapping("/{locationId}")
+    public LocationResponse getLocationById(@PathVariable(name = "locationId") Integer locationId) {
+        return locationService.findLocationByIdForCompany(locationId);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public LocationResponse createLocationForCurrentCompany(@RequestBody @Valid LocationRequest request) {
+
         return locationService.createLocationForCurrentCompany(request);
     }
 
+    @PutMapping("/{locationId}")
+    public LocationResponse updateLocation(@RequestBody @Valid LocationRequest request,
+                                           @PathVariable(name = "locationId") Integer locationId) {
 
+        return locationService.updateLocationForCompany(locationId, request);
+    }
+
+    @DeleteMapping("/{locationId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteLocation(@PathVariable(name = "locationId") Integer locationId) {
+        locationService.deleteLocationForCompany(locationId);
+
+    }
 }

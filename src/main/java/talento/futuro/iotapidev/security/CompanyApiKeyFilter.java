@@ -76,7 +76,6 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-
     private static String getCompanyApiKey(HttpServletRequest request) {
         String companyApiKey = request.getHeader(COMPANY_API_KEY);
         if (companyApiKey == null) {

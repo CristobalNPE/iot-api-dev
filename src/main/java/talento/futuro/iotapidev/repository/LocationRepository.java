@@ -10,6 +10,8 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 
     List<Location> findAllByCompanyId(Integer companyId);
 
+    Optional<Location> findByIdAndCompanyId(Integer locationId, Integer companyId);
+
     boolean existsByName(String name);
 
 }

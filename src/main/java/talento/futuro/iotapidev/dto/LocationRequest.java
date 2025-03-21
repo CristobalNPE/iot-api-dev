@@ -1,9 +1,11 @@
 package talento.futuro.iotapidev.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record LocationRequest(
-        String name,
-        String country,
-        String city,
-        String meta
+        @NotBlank String name,
+        @NotBlank String country,
+        @NotBlank String city,
+        @NotBlank String meta
 ) {
 }
