@@ -11,12 +11,11 @@ import talento.futuro.iotapidev.service.CompanyService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/company")
+@RequestMapping("/api/v1/admin/company")
 @RequiredArgsConstructor
 public class CompanyController {
 
     private final CompanyService companyService;
-
 
     @PostMapping
     public CompanyResponse createCompany(@RequestBody @Valid CompanyRequest request) {
