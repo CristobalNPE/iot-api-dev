@@ -2,7 +2,6 @@ package talento.futuro.iotapidev.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.LocationRequest;
@@ -15,7 +14,6 @@ import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.model.Location;
 import talento.futuro.iotapidev.repository.CompanyRepository;
 import talento.futuro.iotapidev.repository.LocationRepository;
-import talento.futuro.iotapidev.security.ApiKeyAuthentication;
 
 import java.util.List;
 
@@ -27,10 +25,11 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
     private final CompanyRepository companyRepository;
+    private final AuthService authService;
 
     public List<LocationResponse> findAllLocationsForCurrentCompany() {
 
-        Integer companyId = getCompanyIdFromContext();
+        Integer companyId = authService.getCompanyIdFromContext();
 
         List<Location> companyLocations = locationRepository.findAllByCompanyId(companyId);
 
@@ -42,7 +41,7 @@ public class LocationService {
     public LocationResponse createLocationForCurrentCompany(@Valid LocationRequest request) {
         validateRequest(request);
 
-        Integer companyId = getCompanyIdFromContext();
+        Integer companyId = authService.getCompanyIdFromContext();
 
         Company company = companyRepository.findById(companyId).orElseThrow(
                 () -> new CompanyNotFoundException(companyId));
@@ -82,27 +81,17 @@ public class LocationService {
         return locationMapper.toLocationResponse(location);
     }
 
-    private Location getLocationForCompany(Integer locationId) {
+    public Location getLocationForCompany(Integer locationId) {
 
-        Integer companyId = getCompanyIdFromContext();
+        Integer companyId = authService.getCompanyIdFromContext();
 
         return locationRepository.findByIdAndCompanyId(locationId, companyId)
                                  .orElseThrow(() -> new LocationNotFoundException(locationId));
     }
 
     private void validateRequest(@Valid LocationRequest request) {
-
         if (locationRepository.existsByName(request.name())) {
             throw new DuplicatedLocationException(request.name());
         }
-
-
-    }
-
-    private Integer getCompanyIdFromContext() {
-        ApiKeyAuthentication authentication =
-                (ApiKeyAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-        return (Integer) authentication.getDetails();
     }
 }
