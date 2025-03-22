@@ -29,13 +29,12 @@ public class SensorController {
         return sensorService.getSensorById(id);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public SensorResponse createSensor(@RequestBody @Valid SensorRequest request) {
         return sensorService.createSensor(request);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public SensorResponse updateSensor(@PathVariable(value = "id") Integer id,
                                        @RequestBody @Valid SensorRequest request) {
@@ -43,9 +42,9 @@ public class SensorController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSensor(@PathVariable(value = "id") Integer id) {
         sensorService.deleteSensor(id);
     }
-
 
 }

@@ -20,6 +20,7 @@ public class AdminCompanyController {
     private final CompanyService companyService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CompanyResponse createCompany(@RequestBody @Valid CompanyRequest request) {
 
         return companyService.createCompany(request);
