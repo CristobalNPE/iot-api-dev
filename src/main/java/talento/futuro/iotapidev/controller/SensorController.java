@@ -33,7 +33,6 @@ public class SensorController {
         return sensorService.createSensor(request);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public SensorResponse updateSensor(@PathVariable(value = "id") Integer id,
                                        @RequestBody @Valid SensorRequest request) {
