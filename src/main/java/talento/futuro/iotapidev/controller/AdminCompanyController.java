@@ -3,12 +3,9 @@ package talento.futuro.iotapidev.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
-import talento.futuro.iotapidev.security.ApiKeyAuthentication;
 import talento.futuro.iotapidev.service.CompanyService;
 
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/admin/company")
 @RequiredArgsConstructor
-public class CompanyController {
+public class AdminCompanyController {
 
     private final CompanyService companyService;
 
