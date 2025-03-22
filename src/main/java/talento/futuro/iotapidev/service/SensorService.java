@@ -63,7 +63,11 @@ public class SensorService {
     public SensorResponse updateSensor(Integer id, @Valid SensorRequest request) {
 
         Location location = locationService.getLocationForCompany(request.locationId());
-        validateRequest(request);
+
+        if (sensorRepository.existsByNameAndId(request.sensorName(), id)) {
+            throw new DuplicatedSensorException(request.sensorName());
+        }
+
         Sensor sensorForCompany = getSensorForCompany(id);
 
         sensorForCompany.setName(request.sensorName());

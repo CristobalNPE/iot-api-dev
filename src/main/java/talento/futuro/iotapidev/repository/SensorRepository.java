@@ -28,4 +28,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer> {
 
     boolean existsByName(String name);
 
+
+    boolean existsByNameAndId(String name, Integer id);
+
 }

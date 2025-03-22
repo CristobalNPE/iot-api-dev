@@ -2,6 +2,7 @@ package talento.futuro.iotapidev.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
@@ -26,11 +27,13 @@ public class SensorController {
         return sensorService.getSensorById(id);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public SensorResponse createSensor(@RequestBody @Valid SensorRequest request) {
         return sensorService.createSensor(request);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public SensorResponse updateSensor(@PathVariable(value = "id") Integer id,
                                        @RequestBody @Valid SensorRequest request) {
