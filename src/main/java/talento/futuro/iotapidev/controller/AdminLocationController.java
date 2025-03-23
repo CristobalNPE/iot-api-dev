@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/admin/location")
 @RequiredArgsConstructor
-public class LocationAdminController {
+public class AdminLocationController {
     private final LocationService locationService;
 
     @GetMapping
