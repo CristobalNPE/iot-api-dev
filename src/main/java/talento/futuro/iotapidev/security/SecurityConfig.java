@@ -22,28 +22,28 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Temporarily disable CORS (no authorized client origins configured yet)
+        // Disable CORS (no authorized client origins set yet)
         http.cors(AbstractHttpConfigurer::disable);
 
-        // Disable CSRF protection (allow state-changing requests without CSRF token)
+        // Disable CSRF protection (REST API doesn't require CSRF tokens)
         http.csrf(AbstractHttpConfigurer::disable);
 
-        // Use stateless session management (for RESTful API)
+        // Use stateless session management (for REST API)
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // Define authorization rules
+        // Define authorization rules for specific API paths
         http.authorizeHttpRequests(authz -> authz
-                // Restrict access to admin endpoints
+                // Admin endpoints require "ADMIN" role
                 .requestMatchers(ApiBase.V1 + ApiPath.ADMIN + "/**").hasRole("ADMIN")
-                // Require authentication for all other requests
+                // Other endpoints require authentication
                 .anyRequest().authenticated()
         );
 
         // Add Company API key filter before Basic Authentication filter
         http.addFilterBefore(companyApiKeyFilter, BasicAuthenticationFilter.class);
 
-        // Enable HTTP Basic Authentication
+        // Admin endpoints use HTTP Basic Authentication
         http.httpBasic(Customizer.withDefaults());
 
         return http.build();
