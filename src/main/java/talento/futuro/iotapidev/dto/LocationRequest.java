@@ -6,6 +6,7 @@ public record LocationRequest(
         @NotBlank String name,
         @NotBlank String country,
         @NotBlank String city,
-        @NotBlank String meta
+        @NotBlank String meta,
+        Integer companyId
 ) {
 }
