@@ -6,10 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import talento.futuro.iotapidev.constants.ApiBase;
+import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
 
@@ -28,19 +31,32 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return !this.shouldUseCompanyApiKeyForRequest(request);
+    }
 
-        String path = request.getRequestURI();
+    private boolean shouldUseCompanyApiKeyForRequest(HttpServletRequest request) {
+        String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        if (path.startsWith("/api/v1/admin")) {
-            return true;
-        }
+        return isLocationUri(uri)
+                || isSensorUri(uri)
+                || (isSensorDataUri(uri) && !isPostMethod(method));
+    }
 
-        if (path.equals("/api/v1/sensor_data") && method.equals("POST")) {
-            return true;
-        }
+    private boolean isLocationUri(String uri) {
+        return uri.startsWith(ApiBase.V1 + ApiPath.LOCATION);
+    }
 
-        return false;
+    private boolean isSensorUri(String uri) {
+        return uri.startsWith(ApiBase.V1 + ApiPath.SENSOR);
+    }
+
+    private boolean isSensorDataUri(String uri) {
+        return uri.startsWith(ApiBase.V1 + ApiPath.SENSOR_DATA);
+    }
+
+    private boolean isPostMethod(String method) {
+        return method.equals(HttpMethod.POST.toString());
     }
 
     @Override
@@ -50,7 +66,7 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
         String companyApiKey = getCompanyApiKey(request);
 
-        if (companyApiKey == null) {
+        if (companyApiKey == null || companyApiKey.isBlank()) {
             log.info("Company API Key not found.");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Company API Key not found.");
             return;
@@ -83,4 +99,5 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
         }
         return companyApiKey;
     }
+
 }
