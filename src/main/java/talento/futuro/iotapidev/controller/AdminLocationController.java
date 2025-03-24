@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import talento.futuro.iotapidev.constants.ApiBase;
+import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.service.LocationService;
@@ -11,7 +13,7 @@ import talento.futuro.iotapidev.service.LocationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/admin/location")
+@RequestMapping(ApiBase.V1 + ApiPath.ADMIN + ApiPath.LOCATION)
 @RequiredArgsConstructor
 public class AdminLocationController {
     private final LocationService locationService;
