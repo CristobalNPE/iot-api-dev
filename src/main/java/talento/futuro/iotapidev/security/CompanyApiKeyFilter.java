@@ -6,13 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import talento.futuro.iotapidev.constants.ApiBase;
-import talento.futuro.iotapidev.constants.ApiPath;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import talento.futuro.iotapidev.annotation.RequiresCompanyApiKey;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
 
@@ -25,6 +25,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
+    private final RequestMappingHandlerMapping reqMap;
+
     private static final String COMPANY_API_KEY = "X-Company-Api-Key";
     private static final String COMPANY_API_KEY_PARAM = "company_api_key";
     private final CompanyRepository companyRepository;
@@ -34,29 +36,21 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
         return !this.shouldUseCompanyApiKeyForRequest(request);
     }
 
-    private boolean shouldUseCompanyApiKeyForRequest(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
+    private boolean shouldUseCompanyApiKeyForRequest(HttpServletRequest request) throws ServletException {
+        try {
+            HandlerMethod handler = (HandlerMethod) reqMap.getHandler(request).getHandler();
 
-        return isLocationUri(uri)
-                || isSensorUri(uri)
-                || (isSensorDataUri(uri) && !isPostMethod(method));
-    }
+            // Get the annotation from the method first, then fallback to the controller
+            RequiresCompanyApiKey annotation;
+            annotation = handler.getMethod().getAnnotation(RequiresCompanyApiKey.class);
+            if (annotation == null) {
+                annotation = handler.getBeanType().getAnnotation(RequiresCompanyApiKey.class);
+            }
 
-    private boolean isLocationUri(String uri) {
-        return uri.startsWith(ApiBase.V1 + ApiPath.LOCATION);
-    }
-
-    private boolean isSensorUri(String uri) {
-        return uri.startsWith(ApiBase.V1 + ApiPath.SENSOR);
-    }
-
-    private boolean isSensorDataUri(String uri) {
-        return uri.startsWith(ApiBase.V1 + ApiPath.SENSOR_DATA);
-    }
-
-    private boolean isPostMethod(String method) {
-        return method.equals(HttpMethod.POST.toString());
+            return annotation != null && annotation.required();
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 
     @Override

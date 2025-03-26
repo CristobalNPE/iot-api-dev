@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import talento.futuro.iotapidev.annotation.RequiresCompanyApiKey;
 import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.SensorRequest;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.SENSOR)
+@RequiresCompanyApiKey
 @RequiredArgsConstructor
 public class SensorController {
 
