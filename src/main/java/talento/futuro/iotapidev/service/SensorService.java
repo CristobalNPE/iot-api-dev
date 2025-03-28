@@ -116,9 +116,11 @@ public class SensorService {
                 .orElseThrow(() -> new SensorNotFoundException(sensorId));
     }
 
-    public SensorResponse adminCreateLocation(@Valid SensorRequest request) {
+    public SensorResponse adminCreateSensor(@Valid SensorRequest request) {
         Location location = locationRepository.findById(request.locationId())
                 .orElseThrow(() -> new LocationNotFoundException(request.locationId()));
+
+        validateRequest(request);
 
         Sensor newSensor = Sensor
                 .builder()
@@ -148,9 +150,9 @@ public class SensorService {
         return sensorMapper.toSensorResponse(sensorRepository.save(sensor));
     }
 
-    public void adminDeleteLocation(Integer sensorId) {
+    public void adminDeleteSensor(Integer sensorId) {
         if (!sensorRepository.existsById(sensorId)) {
-            throw new LocationNotFoundException(sensorId);
+            throw new SensorNotFoundException(sensorId);
         }
         sensorRepository.deleteById(sensorId);
     }

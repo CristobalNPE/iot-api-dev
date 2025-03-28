@@ -31,7 +31,7 @@ public class AdminSensorController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SensorResponse createSensor(@RequestBody @Valid SensorRequest request) {
-        return sensorService.adminCreateLocation(request);
+        return sensorService.adminCreateSensor(request);
     }
 
     @PutMapping("/{sensorId}")
@@ -42,6 +42,6 @@ public class AdminSensorController {
     @DeleteMapping("/{sensorId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSensor(@PathVariable(name = "sensorId") Integer sensorId) {
-        sensorService.adminDeleteLocation(sensorId);
+        sensorService.adminDeleteSensor(sensorId);
     }
 }
