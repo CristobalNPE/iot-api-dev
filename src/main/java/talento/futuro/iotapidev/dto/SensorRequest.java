@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record SensorRequest(
-        @NotNull Integer locationId,
-        @NotBlank String sensorName,
-        @NotBlank String sensorCategory,
-        @NotBlank String sensorMeta
+        @NotNull(message = "LocationId can't be empty") Integer locationId,
+        @NotBlank(message = "SensorName can't be empty") String sensorName,
+        @NotBlank(message = "SensorCategory can't be empty") String sensorCategory,
+        @NotBlank(message = "SensorMeta can't be empty") String sensorMeta
 ) {
 }
