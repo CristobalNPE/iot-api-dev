@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
-import talento.futuro.iotapidev.dto.LocationRequest;
+import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.service.LocationService;
 
@@ -30,12 +30,13 @@ public class AdminLocationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LocationResponse createLocation(@RequestBody @Valid LocationRequest request) {
+    public LocationResponse createLocation(@RequestBody @Valid LocationAdminRequest request) {
         return locationService.adminCreateLocation(request);
     }
 
     @PutMapping("/{locationId}")
-    public LocationResponse updateLocation(@RequestBody @Valid LocationRequest request, @PathVariable(name = "locationId") Integer locationId) {
+    public LocationResponse updateLocation(@RequestBody @Valid LocationAdminRequest request,
+                                           @PathVariable(name = "locationId") Integer locationId) {
         return locationService.adminUpdateLocation(locationId, request);
     }
 

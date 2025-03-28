@@ -30,7 +30,7 @@ public class SecurityConfig {
                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .authorizeHttpRequests(authz -> authz
                            .requestMatchers(ApiBase.V1 + ApiPath.ADMIN + "/**").hasRole("ADMIN")
-                           .anyRequest().authenticated()
+                           .anyRequest().permitAll()
                    )
                    .addFilterBefore(companyApiKeyFilter, BasicAuthenticationFilter.class)
                    .httpBasic(Customizer.withDefaults())

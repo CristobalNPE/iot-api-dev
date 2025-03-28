@@ -3,18 +3,16 @@ package talento.futuro.iotapidev.consumer;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
-import talento.futuro.iotapidev.service.MessageProcessorService;
+import talento.futuro.iotapidev.service.PayloadProcessor;
 
-@Service()
-@Profile("activemq")
-@AllArgsConstructor
 @Slf4j
+@Service
+@AllArgsConstructor
 public class ActiveMQConsumer implements MessageConsumer {
 
-    private final MessageProcessorService messageProcessorService;
+    private final PayloadProcessor payloadProcessor;
 
     @PostConstruct
     public void init() {
@@ -22,13 +20,9 @@ public class ActiveMQConsumer implements MessageConsumer {
     }
 
     @Override
-    @JmsListener(destination = "${spring.activemq.queue.myQueue}")
+    @JmsListener(destination = "${app.activemq.queue.myQueue}")
     public void consume(String message) {
-        log.info("ActiveMQ Message received: " + message);
-        try {
-            messageProcessorService.processMessage(message);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+        log.info("\n📧 ActiveMQ Message received: \n{}", message);
+        payloadProcessor.extractSensorData(message);
     }
 }
