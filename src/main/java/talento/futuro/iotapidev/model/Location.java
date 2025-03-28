@@ -1,5 +1,8 @@
 package talento.futuro.iotapidev.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,5 +33,8 @@ public class Location {
 
     @Column(name = "location_meta")
     private String meta;
+    
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sensor> sensors = new ArrayList<>();
 
 }

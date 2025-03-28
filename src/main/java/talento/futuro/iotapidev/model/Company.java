@@ -1,5 +1,8 @@
 package talento.futuro.iotapidev.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +25,6 @@ public class Company {
     @Column(name = "company_api_key", nullable = false)
     private String apiKey;
 
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Location> locations = new ArrayList<>();
 }
