@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
 import talento.futuro.iotapidev.exception.CompanyNotFoundException;
+import talento.futuro.iotapidev.exception.DuplicatedCompanyException;
 import talento.futuro.iotapidev.mapper.CompanyMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
@@ -24,7 +25,7 @@ public class CompanyService {
     private final ApiKeyGenerator apiKeyGenerator;
 
     public CompanyResponse createCompany(@Valid CompanyRequest request) {
-
+    	validateRequest(request);
         Company company = Company.builder()
                                  .name(request.companyName())
                                  .apiKey(apiKeyGenerator.generateApiKey())
@@ -63,6 +64,12 @@ public class CompanyService {
         company = companyRepository.save(company);
 
         return companyMapper.toResponse(company);
+    }
+    
+    private void validateRequest(@Valid CompanyRequest request) {
+        if (companyRepository.existsByName(request.companyName())) {
+            throw new DuplicatedCompanyException(request.companyName());
+        }
     }
 
 }

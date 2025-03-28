@@ -41,15 +41,21 @@ public class GlobalExceptionHandler {
          		new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
     }
     
+    @ExceptionHandler(DuplicatedCompanyException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicatedCompanyException(DuplicatedCompanyException ex) {
+    	 return ResponseEntity.status(HttpStatus.CONFLICT).body(
+         		new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
+    }
+    
     @ExceptionHandler(DuplicatedLocationException.class)
     public ResponseEntity<ErrorResponse> handleDuplicatedLocationException(DuplicatedLocationException ex) {
-    	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+    	 return ResponseEntity.status(HttpStatus.CONFLICT).body(
          		new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
     }
     
     @ExceptionHandler(DuplicatedSensorException.class)
     public ResponseEntity<ErrorResponse> handleDuplicatedSensorException(DuplicatedSensorException ex) {
-    	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+    	 return ResponseEntity.status(HttpStatus.CONFLICT).body(
          		new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
     }
     
