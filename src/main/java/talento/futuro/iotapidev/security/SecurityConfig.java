@@ -22,31 +22,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Temporarily disable CORS (no authorized client origins configured yet)
-        http.cors(AbstractHttpConfigurer::disable);
 
-        // Disable CSRF protection (allow state-changing requests without CSRF token)
-        http.csrf(AbstractHttpConfigurer::disable);
-
-        // Use stateless session management (for RESTful API)
-        http.sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        // Define authorization rules
-        http.authorizeHttpRequests(authz -> authz
-                // Restrict access to admin endpoints
-                .requestMatchers(ApiBase.V1 + ApiPath.ADMIN + "/**").hasRole("ADMIN")
-                // Require authentication for all other requests
-                .anyRequest().authenticated()
-        );
-
-        // Add Company API key filter before Basic Authentication filter
-        http.addFilterBefore(companyApiKeyFilter, BasicAuthenticationFilter.class);
-
-        // Enable HTTP Basic Authentication
-        http.httpBasic(Customizer.withDefaults());
-
-        return http.build();
+        return http.cors(AbstractHttpConfigurer::disable)
+                   .csrf(AbstractHttpConfigurer::disable)
+                   .sessionManagement(session -> session
+                           .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                   .authorizeHttpRequests(authz -> authz
+                           .requestMatchers(ApiBase.V1 + ApiPath.ADMIN + "/**").hasRole("ADMIN")
+                           .anyRequest().authenticated()
+                   )
+                   .addFilterBefore(companyApiKeyFilter, BasicAuthenticationFilter.class)
+                   .httpBasic(Customizer.withDefaults())
+                   .build();
     }
 
     @Bean
