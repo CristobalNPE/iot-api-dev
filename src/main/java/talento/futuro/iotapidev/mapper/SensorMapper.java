@@ -11,12 +11,13 @@ public class SensorMapper {
 
         return new SensorResponse(
                 sensor.getId(),
+                sensor.getLocation().getId(),
                 sensor.getName(),
                 sensor.getCategory(),
+                sensor.getMeta(),
                 sensor.getApiKey()
         );
 
     }
-
 
 }
