@@ -1,6 +1,7 @@
 package talento.futuro.iotapidev.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -34,6 +35,13 @@ public class SecurityConfig {
                    .addFilterBefore(companyApiKeyFilter, BasicAuthenticationFilter.class)
                    .httpBasic(Customizer.withDefaults())
                    .build();
+    }
+
+    @Bean
+    public FilterRegistrationBean<CompanyApiKeyFilter> companyApiKeyFilterRegistration(CompanyApiKeyFilter filter) {
+        FilterRegistrationBean<CompanyApiKeyFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean
