@@ -1,6 +1,8 @@
 package talento.futuro.iotapidev.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public record CompanyRequest(
-        String companyName
+		 @NotNull(message = "CompanyName can't be empty")  String companyName
 ) {
 }
