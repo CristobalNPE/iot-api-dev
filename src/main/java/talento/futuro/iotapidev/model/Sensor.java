@@ -4,6 +4,9 @@ package talento.futuro.iotapidev.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "sensor")
 @Getter
@@ -31,4 +34,7 @@ public class Sensor {
 
     @Column(name = "sensor_api_key", nullable = false)
     private String apiKey;
+
+    @OneToMany(mappedBy = "sensor", cascade = CascadeType.ALL)
+    private List<SensorData> sensorData = new ArrayList<>();
 }

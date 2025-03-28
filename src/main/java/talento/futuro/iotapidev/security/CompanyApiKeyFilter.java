@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,43 +19,32 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static talento.futuro.iotapidev.constants.ApiKeys.COMPANY_API_KEY_PARAM;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
     private static final String COMPANY_API_KEY = "X-Company-Api-Key";
-    private static final String COMPANY_API_KEY_PARAM = "company_api_key";
+
     private final CompanyRepository companyRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return !this.shouldUseCompanyApiKeyForRequest(request);
-    }
 
-    private boolean shouldUseCompanyApiKeyForRequest(HttpServletRequest request) {
-        String uri = request.getRequestURI();
+        String path = request.getRequestURI();
         String method = request.getMethod();
 
-        return isLocationUri(uri)
-                || isSensorUri(uri)
-                || (isSensorDataUri(uri) && !isPostMethod(method));
-    }
+        if (path.startsWith(ApiBase.V1 + ApiPath.ADMIN)) {
+            return true;
+        }
 
-    private boolean isLocationUri(String uri) {
-        return uri.startsWith(ApiBase.V1 + ApiPath.LOCATION);
-    }
+        if (path.equals(ApiBase.V1 + ApiPath.SENSOR_DATA) && method.equals("POST")) {
+            return true;
+        }
 
-    private boolean isSensorUri(String uri) {
-        return uri.startsWith(ApiBase.V1 + ApiPath.SENSOR);
-    }
-
-    private boolean isSensorDataUri(String uri) {
-        return uri.startsWith(ApiBase.V1 + ApiPath.SENSOR_DATA);
-    }
-
-    private boolean isPostMethod(String method) {
-        return method.equals(HttpMethod.POST.toString());
+        return false;
     }
 
     @Override

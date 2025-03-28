@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.exception.CompanyNotFoundException;
@@ -99,16 +100,16 @@ public class LocationService {
         List<Location> locations = locationRepository.findAll();
 
         return locations.stream()
-                .map(locationMapper::toLocationResponse)
-                .toList();
+                        .map(locationMapper::toLocationResponse)
+                        .toList();
     }
 
-    public LocationResponse adminCreateLocation(@Valid LocationRequest request) {
+    public LocationResponse adminCreateLocation(@Valid LocationAdminRequest request) {
         if (request.companyId() == null) {
             throw new CompanyNotFoundException(null);
         }
         Company company = companyRepository.findById(request.companyId())
-                .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
+                                           .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
 
         Location newLocation = Location
                 .builder()
@@ -126,19 +127,19 @@ public class LocationService {
 
     public LocationResponse adminFindLocationById(Integer locationId) {
         return locationRepository.findById(locationId)
-                .map(locationMapper::toLocationResponse)
-                .orElseThrow(() -> new LocationNotFoundException(locationId));
+                                 .map(locationMapper::toLocationResponse)
+                                 .orElseThrow(() -> new LocationNotFoundException(locationId));
     }
 
-    public LocationResponse adminUpdateLocation(Integer locationId, @Valid LocationRequest request) {
+    public LocationResponse adminUpdateLocation(Integer locationId, @Valid LocationAdminRequest request) {
         if (request.companyId() == null) {
             throw new CompanyNotFoundException(null);
         }
         Company company = companyRepository.findById(request.companyId())
-                .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
+                                           .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
 
         Location location = locationRepository.findById(locationId)
-                .orElseThrow(() -> new LocationNotFoundException(locationId));
+                                              .orElseThrow(() -> new LocationNotFoundException(locationId));
 
         location.setCompany(company);
         location.setName(request.name());
