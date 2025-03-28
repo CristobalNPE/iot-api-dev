@@ -13,40 +13,35 @@ import talento.futuro.iotapidev.service.LocationService;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiBase.V1 + ApiPath.LOCATION)
+@RequestMapping(ApiBase.V1 + ApiPath.ADMIN + ApiPath.LOCATION)
 @RequiredArgsConstructor
-public class LocationController {
-
+public class AdminLocationController {
     private final LocationService locationService;
 
     @GetMapping
-    public List<LocationResponse> getAllLocationsForCurrentCompany() {
-        return locationService.findAllLocationsForCurrentCompany();
+    public List<LocationResponse> getAllLocations() {
+        return locationService.adminFindAllLocations();
     }
 
     @GetMapping("/{locationId}")
     public LocationResponse getLocationById(@PathVariable(name = "locationId") Integer locationId) {
-        return locationService.findLocationByIdForCompany(locationId);
+        return locationService.adminFindLocationById(locationId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LocationResponse createLocationForCurrentCompany(@RequestBody @Valid LocationRequest request) {
-
-        return locationService.createLocationForCurrentCompany(request);
+    public LocationResponse createLocation(@RequestBody @Valid LocationRequest request) {
+        return locationService.adminCreateLocation(request);
     }
 
     @PutMapping("/{locationId}")
-    public LocationResponse updateLocation(@RequestBody @Valid LocationRequest request,
-                                           @PathVariable(name = "locationId") Integer locationId) {
-
-        return locationService.updateLocationForCompany(locationId, request);
+    public LocationResponse updateLocation(@RequestBody @Valid LocationRequest request, @PathVariable(name = "locationId") Integer locationId) {
+        return locationService.adminUpdateLocation(locationId, request);
     }
 
     @DeleteMapping("/{locationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLocation(@PathVariable(name = "locationId") Integer locationId) {
-        locationService.deleteLocationForCompany(locationId);
-
+        locationService.adminDeleteLocation(locationId);
     }
 }

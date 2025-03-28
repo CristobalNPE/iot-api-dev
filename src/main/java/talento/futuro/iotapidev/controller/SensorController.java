@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import talento.futuro.iotapidev.constants.ApiBase;
+import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
 import talento.futuro.iotapidev.service.SensorService;
@@ -11,7 +13,7 @@ import talento.futuro.iotapidev.service.SensorService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/sensors")
+@RequestMapping(ApiBase.V1 + ApiPath.SENSOR)
 @RequiredArgsConstructor
 public class SensorController {
 
@@ -27,13 +29,12 @@ public class SensorController {
         return sensorService.getSensorById(id);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public SensorResponse createSensor(@RequestBody @Valid SensorRequest request) {
         return sensorService.createSensor(request);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public SensorResponse updateSensor(@PathVariable(value = "id") Integer id,
                                        @RequestBody @Valid SensorRequest request) {
@@ -41,9 +42,9 @@ public class SensorController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSensor(@PathVariable(value = "id") Integer id) {
         sensorService.deleteSensor(id);
     }
-
 
 }

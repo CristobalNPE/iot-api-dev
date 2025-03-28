@@ -94,4 +94,65 @@ public class LocationService {
             throw new DuplicatedLocationException(request.name());
         }
     }
+
+    public List<LocationResponse> adminFindAllLocations() {
+        List<Location> locations = locationRepository.findAll();
+
+        return locations.stream()
+                .map(locationMapper::toLocationResponse)
+                .toList();
+    }
+
+    public LocationResponse adminCreateLocation(@Valid LocationRequest request) {
+        if (request.companyId() == null) {
+            throw new CompanyNotFoundException(null);
+        }
+        Company company = companyRepository.findById(request.companyId())
+                .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
+
+        Location newLocation = Location
+                .builder()
+                .company(company)
+                .name(request.name())
+                .city(request.city())
+                .country(request.country())
+                .meta(request.meta())
+                .build();
+
+        Location saved = locationRepository.save(newLocation);
+
+        return locationMapper.toLocationResponse(saved);
+    }
+
+    public LocationResponse adminFindLocationById(Integer locationId) {
+        return locationRepository.findById(locationId)
+                .map(locationMapper::toLocationResponse)
+                .orElseThrow(() -> new LocationNotFoundException(locationId));
+    }
+
+    public LocationResponse adminUpdateLocation(Integer locationId, @Valid LocationRequest request) {
+        if (request.companyId() == null) {
+            throw new CompanyNotFoundException(null);
+        }
+        Company company = companyRepository.findById(request.companyId())
+                .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new LocationNotFoundException(locationId));
+
+        location.setCompany(company);
+        location.setName(request.name());
+        location.setCity(request.city());
+        location.setCountry(request.country());
+        location.setMeta(request.meta());
+
+        return locationMapper.toLocationResponse(locationRepository.save(location));
+    }
+
+    public void adminDeleteLocation(Integer locationId) {
+        if (!locationRepository.existsById(locationId)) {
+            throw new LocationNotFoundException(locationId);
+        }
+        locationRepository.deleteById(locationId);
+    }
 }

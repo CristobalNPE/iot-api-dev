@@ -7,5 +7,6 @@ public record LocationRequest(
         @NotBlank(message = "Country can't be empty") String country,
         @NotBlank(message = "City can't be empty")  String city,
         @NotBlank(message = "Meta can't be empty")  String meta
+
 ) {
 }
