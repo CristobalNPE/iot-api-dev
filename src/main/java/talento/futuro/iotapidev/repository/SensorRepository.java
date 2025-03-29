@@ -1,5 +1,7 @@
 package talento.futuro.iotapidev.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import talento.futuro.iotapidev.model.Sensor;
@@ -15,7 +17,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer> {
             join s.location l
             where l.company.id = :companyId
             """)
-    List<Sensor> getAllSensorsForCompany(Integer companyId);
+    Page<Sensor> getAllSensorsForCompany(Integer companyId, Pageable pageable);
 
 
     @Query("""

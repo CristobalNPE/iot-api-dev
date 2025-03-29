@@ -2,6 +2,8 @@ package talento.futuro.iotapidev.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import talento.futuro.iotapidev.constants.ApiBase;
@@ -10,8 +12,6 @@ import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
 import talento.futuro.iotapidev.service.SensorService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.ADMIN + ApiPath.SENSOR)
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class AdminSensorController {
     private final SensorService sensorService;
 
     @GetMapping
-    public List<SensorResponse> getAllSensors() {
-        return sensorService.adminFindAllSensors();
+    public Page<SensorResponse> getAllSensors(Pageable pageable) {
+        return sensorService.adminFindAllSensors(pageable);
     }
 
     @GetMapping("/{sensorId}")

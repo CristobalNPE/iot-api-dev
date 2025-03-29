@@ -2,6 +2,8 @@ package talento.futuro.iotapidev.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.SensorRequest;
@@ -30,12 +32,13 @@ public class SensorService {
     private final ApiKeyGenerator apiKeyGenerator;
     private final LocationRepository locationRepository;
 
-    public List<SensorResponse> getAllSensorForCompany() {
+    public Page<SensorResponse> getAllSensorForCompany(Pageable pageable) {
         Integer companyId = authService.getCompanyIdFromContext();
 
-        return sensorRepository.getAllSensorsForCompany(companyId).stream()
-                               .map(sensorMapper::toSensorResponse)
-                               .toList();
+        Page<Sensor> sensors = sensorRepository.getAllSensorsForCompany(companyId, pageable);
+
+        return sensors.map(sensorMapper::toSensorResponse);
+
     }
 
     public SensorResponse getSensorById(Integer id) {
@@ -102,12 +105,10 @@ public class SensorService {
                 .orElseThrow(() -> new SensorNotFoundException(id));
     }
 
-    public List<SensorResponse> adminFindAllSensors() {
-        List<Sensor> sensors = sensorRepository.findAll();
+    public Page<SensorResponse> adminFindAllSensors(Pageable pageable) {
+        Page<Sensor> sensors = sensorRepository.findAll(pageable);
 
-        return sensors.stream()
-                .map(sensorMapper::toSensorResponse)
-                .toList();
+        return sensors.map(sensorMapper::toSensorResponse);
     }
 
     public SensorResponse adminFindSensorById(Integer sensorId) {
