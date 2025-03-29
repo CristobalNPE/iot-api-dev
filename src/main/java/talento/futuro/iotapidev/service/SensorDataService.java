@@ -13,7 +13,6 @@ import talento.futuro.iotapidev.dto.SensorDataSearchCriteria;
 import talento.futuro.iotapidev.mapper.SensorDataMapper;
 import talento.futuro.iotapidev.model.SensorData;
 import talento.futuro.iotapidev.repository.SensorDataRepository;
-import talento.futuro.iotapidev.repository.SensorDataSearch;
 import talento.futuro.iotapidev.repository.specs.SensorDataSpecifications;
 
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SensorDataService {
 
-    private final SensorDataSearch sensorDataSearch;
     private final SensorDataRepository sensorDataRepository;
     private final SensorDataMapper sensorDataMapper;
     private final PayloadProcessor payloadProcessor;
@@ -41,16 +39,6 @@ public class SensorDataService {
         Specification<SensorData> spec = SensorDataSpecifications.withSearchCriteria(criteria);
         return sensorDataRepository.findAll(spec, pageable).map(sensorDataMapper::toResponse);
     }
-//
-//    public Page<SensorDataResponse> searchData(Long from, Long to, List<Integer> sensorIds, Pageable pageable) {
-//        Integer companyId = authService.getCompanyIdFromContext();
-//        SensorDataSearchCriteria criteria = new SensorDataSearchCriteria(from, to, companyId, sensorIds);
-//
-//        Page<SensorData> search = sensorDataSearch.search(criteria, pageable);
-//        return search.map(sensorDataMapper::toResponse);
-//
-//    }
-
 
 
     public void deleteAllSensorData(Integer sensorId) {
