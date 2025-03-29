@@ -11,6 +11,7 @@ import talento.futuro.iotapidev.dto.SensorDataResponse;
 import talento.futuro.iotapidev.dto.SensorDataSearchCriteria;
 import talento.futuro.iotapidev.mapper.SensorDataMapper;
 import talento.futuro.iotapidev.model.SensorData;
+import talento.futuro.iotapidev.repository.SensorDataRepository;
 import talento.futuro.iotapidev.repository.SensorDataSearch;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 public class SensorDataService {
 
     private final SensorDataSearch sensorDataSearch;
+    private final SensorDataRepository sensorDataRepository;
     private final SensorDataMapper sensorDataMapper;
     private final PayloadProcessor payloadProcessor;
     private final AuthService authService;
@@ -40,4 +42,8 @@ public class SensorDataService {
 
     }
 
+    public void deleteAllSensorData(Integer sensorId) {
+        Integer companyId = authService.getCompanyIdFromContext();
+        sensorDataRepository.deleteAllSensorDataForCompanySensor(companyId, sensorId);
+    }
 }

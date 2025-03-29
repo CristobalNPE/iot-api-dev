@@ -2,6 +2,8 @@ package talento.futuro.iotapidev.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import talento.futuro.iotapidev.constants.ApiBase;
@@ -9,8 +11,6 @@ import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.service.LocationService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.LOCATION)
@@ -20,8 +20,8 @@ public class LocationController {
     private final LocationService locationService;
 
     @GetMapping
-    public List<LocationResponse> getAllLocationsForCurrentCompany() {
-        return locationService.findAllLocationsForCurrentCompany();
+    public Page<LocationResponse> getAllLocationsForCurrentCompany(Pageable pageable) {
+        return locationService.findAllLocationsForCurrentCompany(pageable);
     }
 
     @GetMapping("/{locationId}")

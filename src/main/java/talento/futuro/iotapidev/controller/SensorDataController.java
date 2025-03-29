@@ -45,7 +45,13 @@ public class SensorDataController {
         log.info("SensorIds: {} ", sensorIds);
         log.info("CompanyApiKey: {} ", companyApiKey);
 
-        return sensorDataService.searchData(from,to,sensorIds, pageable);
+        return sensorDataService.searchData(from, to, sensorIds, pageable);
 
+    }
+
+    @DeleteMapping("/{sensorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllSensorData(@PathVariable(name = "sensorId") Integer sensorId) {
+        sensorDataService.deleteAllSensorData(sensorId);
     }
 }

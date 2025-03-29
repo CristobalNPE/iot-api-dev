@@ -2,6 +2,8 @@ package talento.futuro.iotapidev.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.LocationAdminRequest;
@@ -28,15 +30,13 @@ public class LocationService {
     private final CompanyRepository companyRepository;
     private final AuthService authService;
 
-    public List<LocationResponse> findAllLocationsForCurrentCompany() {
+    public Page<LocationResponse> findAllLocationsForCurrentCompany(Pageable pageable) {
 
         Integer companyId = authService.getCompanyIdFromContext();
 
-        List<Location> companyLocations = locationRepository.findAllByCompanyId(companyId);
+        Page<Location> companyLocationsPage = locationRepository.findAllByCompanyId(companyId, pageable);
 
-        return companyLocations.stream()
-                               .map(locationMapper::toLocationResponse)
-                               .toList();
+        return companyLocationsPage.map(locationMapper::toLocationResponse);
     }
 
     public LocationResponse createLocationForCurrentCompany(@Valid LocationRequest request) {
