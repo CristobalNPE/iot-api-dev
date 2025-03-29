@@ -1,0 +1,92 @@
+[[companies]]
+=== Compañías
+
+[[create-company]]
+==== Registrando una Compañía
+
+A `POST` request creates a new company.
+
+===== Request
+
+include::{snippets}/admin/create-company/http-request.adoc[]
+
+===== Request Fields
+
+include::{snippets}/admin/create-company/request-fields.adoc[]
+
+===== Response
+
+include::{snippets}/admin/create-company/http-response.adoc[]
+
+===== Response Fields
+
+include::{snippets}/admin/create-company/response-fields.adoc[]
+
+// [[get-all-companies]]
+// ==== Retrieving All Companies
+//
+// A `GET` request retrieves all companies.
+//
+// ===== Request
+//
+// include::{snippets}/get-all-companies/http-request.adoc[]
+//
+// ===== Response
+//
+// include::{snippets}/get-all-companies/http-response.adoc[]
+//
+// [[get-company-by-id]]
+// ==== Retrieving a Company by ID
+//
+// A `GET` request retrieves a specific company by its ID.
+//
+// ===== Request
+//
+// include::{snippets}/get-company-by-id/http-request.adoc[]
+//
+// ===== Response
+//
+// include::{snippets}/get-company-by-id/http-response.adoc[]
+//
+// [[get-company-by-id-not-found]]
+// ==== Retrieving a Company by ID (Not Found)
+//
+// A `GET` request retrieves a specific company by its ID, but the company does not exist with the given ID.
+//
+// ===== Request
+//
+// include::{snippets}/get-company-by-id-not-found/http-request.adoc[]
+//
+// ===== Response
+//
+// include::{snippets}/get-company-by-id-not-found/http-response.adoc[]
+//
+// ===== Response Fields
+//
+// include::{snippets}/get-company-by-id-not-found/response-fields.adoc[]
+
+// [[update-company]]
+// ==== Updating a Company
+//
+// A `PUT` request updates an existing company.
+//
+// ===== Request
+//
+// include::{snippets}/update-company/http-request.adoc[]
+//
+// ===== Response
+//
+// include::{snippets}/update-company/http-response.adoc[]
+//
+// [[delete-company]]
+// ==== Deleting a Company
+//
+// A `DELETE` request removes a company.
+//
+// ===== Request
+//
+// include::{snippets}/delete-company/http-request.adoc[]
+//
+// ===== Response
+//
+// include::{snippets}/delete-company/http-response.adoc[]

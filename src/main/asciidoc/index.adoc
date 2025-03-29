@@ -1,0 +1,47 @@
+= Documentación API IoT Dev (Talento Futuro)
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+[[overview]]
+== Overview
+
+This document describes the API endpoints available for an IoT service.
+
+[[auth]]
+== Autenticación y Autorización
+*   Los endpoints bajo `/admin/` requieren que el usuario esté autenticado y tenga el rol `ADMIN`.
+*   Los endpoints dedicados a compañías (ej: `/locations`, `/sensors`) generalmente operan en el contexto de la compañía asociada al usuario autenticado y son validadas mediante una `X-Company-Api-Key` en la cabecera o `company_api_key` en los parámetros de la URL.
+*   El endpoint `/sensor-data` (POST) utiliza la `api_key` del sensor correspondiente dentro del payload para identificar el sensor que está enviando los datos.
+
+[[pagination]]
+== Paginación
+Algunos endpoints GET que devuelven listas soportan paginación a través de los siguientes parámetros de consulta:
+
+*   `page`: Número de página a recuperar (base 0, opcional, por defecto 0).
+*   `size`: Número de elementos por página (opcional, por defecto 20).
+*   `sort`: Propiedad(es) para ordenar. Formato: `propiedad[,asc|desc]`. Múltiples propiedades separadas por coma. Ejemplo: `name,asc`.
+
+La respuesta paginada tendrá la siguiente estructura JSON:
+[source,json,opts=novalidate]
+----
+{
+  "content": [
+    //...objetos de la página actual...
+  ],
+  "page": {
+        "size": 20,
+        "number": 0,
+        "totalElements": 100,
+        "totalPages": 5
+    }
+}
+----
+
+[[api]]
+== API
+
+include::companies.adoc[]

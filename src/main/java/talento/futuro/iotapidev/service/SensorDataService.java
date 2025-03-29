@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.Payload;
@@ -13,6 +14,7 @@ import talento.futuro.iotapidev.mapper.SensorDataMapper;
 import talento.futuro.iotapidev.model.SensorData;
 import talento.futuro.iotapidev.repository.SensorDataRepository;
 import talento.futuro.iotapidev.repository.SensorDataSearch;
+import talento.futuro.iotapidev.repository.specs.SensorDataSpecifications;
 
 import java.util.List;
 
@@ -34,13 +36,22 @@ public class SensorDataService {
 
     public Page<SensorDataResponse> searchData(Long from, Long to, List<Integer> sensorIds, Pageable pageable) {
         Integer companyId = authService.getCompanyIdFromContext();
-
         SensorDataSearchCriteria criteria = new SensorDataSearchCriteria(from, to, companyId, sensorIds);
 
-        Page<SensorData> search = sensorDataSearch.search(criteria, pageable);
-        return search.map(sensorDataMapper::toResponse);
-
+        Specification<SensorData> spec = SensorDataSpecifications.withSearchCriteria(criteria);
+        return sensorDataRepository.findAll(spec, pageable).map(sensorDataMapper::toResponse);
     }
+//
+//    public Page<SensorDataResponse> searchData(Long from, Long to, List<Integer> sensorIds, Pageable pageable) {
+//        Integer companyId = authService.getCompanyIdFromContext();
+//        SensorDataSearchCriteria criteria = new SensorDataSearchCriteria(from, to, companyId, sensorIds);
+//
+//        Page<SensorData> search = sensorDataSearch.search(criteria, pageable);
+//        return search.map(sensorDataMapper::toResponse);
+//
+//    }
+
+
 
     public void deleteAllSensorData(Integer sensorId) {
         Integer companyId = authService.getCompanyIdFromContext();
