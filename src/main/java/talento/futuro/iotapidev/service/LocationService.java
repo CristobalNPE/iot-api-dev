@@ -96,12 +96,10 @@ public class LocationService {
         }
     }
 
-    public List<LocationResponse> adminFindAllLocations() {
-        List<Location> locations = locationRepository.findAll();
+    public Page<LocationResponse> adminFindAllLocations(Pageable pageable) {
+        Page<Location> locations = locationRepository.findAll(pageable);
 
-        return locations.stream()
-                        .map(locationMapper::toLocationResponse)
-                        .toList();
+        return locations.map(locationMapper::toLocationResponse);
     }
 
     public LocationResponse adminCreateLocation(@Valid LocationAdminRequest request) {
