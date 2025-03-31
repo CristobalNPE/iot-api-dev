@@ -1,0 +1,368 @@
+[[sensors-company]]
+=== Sensores (Compañía)
+
+Endpoints para gestionar los sensores asociados a las ubicaciones de la compañía identificada por la API Key proporcionada.
+
+*Autenticación:*
+Todas las peticiones a estos endpoints requieren una API Key válida de la compañía. La clave puede ser proporcionada de dos maneras (el header tiene prioridad):
+
+1.  Header HTTP: `X-Company-Api-Key: <tu_api_key>`
+2.  Parámetro de Consulta URL: `?company_api_key=<tu_api_key>`
+
+// #################################################################
+[[sensor-get-all]]
+==== Obtener Todos `(GET /)`
+
+Recupera una lista de todos los sensores asociados a la compañía autenticada.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/sensors`. Requiere la API Key de la compañía. Este endpoint *no* está paginado actualmente.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/get-all/request-headers.adoc[]
+// Query parameters snippet not applicable here unless added later
+
+*Petición:*
+include::{snippets}/sensor/get-all/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un array JSON con la lista completa de sensores de la compañía.
+include::{snippets}/sensor/get-all/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+Describe la estructura del array y los campos de cada objeto sensor.
+include::{snippets}/sensor/get-all/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/get-all/curl-request.adoc[]
+
+// #################################################################
+[[sensor-get-all-invalid-key]]
+===== Error - API Key Inválida `(GET /)`
+
+Si la API Key proporcionada (header o parámetro) no existe o es inválida, el servidor responderá con un error `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/sensor/get-all-invalid-key/request-headers.adoc[]
+
+*Petición (Ejemplo Header):*
+include::{snippets}/sensor/get-all-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+El servidor responde con 401 Unauthorized.
+include::{snippets}/sensor/get-all-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/get-all-invalid-key/curl-request.adoc[]
+
+// #################################################################
+[[sensor-get-all-missing-key]]
+===== Error - API Key Faltante `(GET /)`
+
+Si no se proporciona la API Key (ni header ni parámetro), el servidor responderá con un error `401 Unauthorized`.
+
+*Petición:*
+include::{snippets}/sensor/get-all-missing-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/sensor/get-all-missing-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/get-all-missing-key/curl-request.adoc[]
+
+// #################################################################
+[[sensor-get-by-id]]
+==== Obtener por ID `(GET /{id})`
+
+Recupera los detalles de un sensor específico, siempre que pertenezca a una ubicación de la compañía autenticada.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/sensors/{id}`. Requiere la API Key de la compañía propietaria de la ubicación del sensor.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/get-by-id/request-headers.adoc[]
+// Query parameters snippet not applicable
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/get-by-id/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor/get-by-id/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un objeto JSON con los detalles del sensor encontrado.
+include::{snippets}/sensor/get-by-id/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/sensor/get-by-id/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/get-by-id/curl-request.adoc[]
+
+// #################################################################
+[[sensor-get-by-id-not-found]]
+===== Error - No Encontrado / No Pertenece `(GET /{id})`
+
+Si el `id` del sensor no existe o no pertenece a la compañía autenticada, el servidor responderá con un error `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/get-by-id-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/get-by-id-not-found/path-parameters.adoc[]
+
+*Petición (ID Inexistente o Incorrecto):*
+include::{snippets}/sensor/get-by-id-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error 404.
+include::{snippets}/sensor/get-by-id-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+Describe la estructura de la respuesta de error 404.
+include::{snippets}/sensor/get-by-id-not-found/response-fields.adoc[]
+
+*Ejemplo cURL (ID Inexistente o Incorrecto):*
+include::{snippets}/sensor/get-by-id-not-found/curl-request.adoc[]
+
+// (Include sections for Invalid Key and Missing Key for GET /{id} similar to locations.adoc if desired/generated)
+
+// #################################################################
+[[sensor-create]]
+==== Crear `(POST /)`
+
+Crea un nuevo sensor y lo asocia a una ubicación existente *perteneciente a la compañía autenticada*. La API Key del sensor es generada automáticamente.
+
+*Descripción:*
+Una petición `POST` a `/api/v1/sensors` con los detalles del nuevo sensor en el cuerpo. Requiere la API Key de la compañía y que el `locationId` proporcionado pertenezca a dicha compañía.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/create/request-headers.adoc[]
+// Query parameters snippet not applicable
+
+*Petición:*
+include::{snippets}/sensor/create/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/sensor/create/request-fields.adoc[]
+
+*Respuesta (Éxito - 201 Created):*
+Devuelve los detalles del sensor recién creado, incluyendo su ID y API Key asignados.
+include::{snippets}/sensor/create/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/sensor/create/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/create/curl-request.adoc[]
+
+// #################################################################
+[[sensor-create-validation-error]]
+===== Error de Validación `(POST /)`
+
+Si faltan campos obligatorios o tienen formato incorrecto (ej: `sensorName` vacío) en el cuerpo de la petición, el servidor responderá con `400 Bad Request`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/create-validation-error/request-headers.adoc[]
+
+*Petición (Inválida):*
+Este ejemplo muestra una petición donde `sensorName` es inválido.
+include::{snippets}/sensor/create-validation-error/http-request.adoc[]
+
+*Respuesta (Error - 400 Bad Request):*
+Devuelve un mapa JSON con los campos erróneos y los mensajes de validación.
+include::{snippets}/sensor/create-validation-error/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor/create-validation-error/response-fields.adoc[]
+
+*Ejemplo cURL (Inválido):*
+include::{snippets}/sensor/create-validation-error/curl-request.adoc[]
+
+// #################################################################
+[[sensor-create-location-not-found]]
+===== Error - Ubicación No Encontrada / No Pertenece `(POST /)`
+
+Si el `locationId` proporcionado en el cuerpo no existe o no pertenece a la compañía autenticada, el servidor responderá con `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/create-location-not-found/request-headers.adoc[]
+
+*Petición (locationId Inválido):*
+include::{snippets}/sensor/create-location-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+include::{snippets}/sensor/create-location-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor/create-location-not-found/response-fields.adoc[]
+
+*Ejemplo cURL (locationId Inválido):*
+include::{snippets}/sensor/create-location-not-found/curl-request.adoc[]
+
+// #################################################################
+[[sensor-create-duplicate-error]]
+===== Error - Nombre Duplicado `(POST /)`
+
+Si ya existe un sensor con el mismo `sensorName` (potencialmente dentro de la misma compañía o ubicación, dependiendo de la lógica de negocio implementada), el servidor responderá con `409 Conflict`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/create-duplicate-error/request-headers.adoc[]
+
+*Petición (Nombre Duplicado):*
+include::{snippets}/sensor/create-duplicate-error/http-request.adoc[]
+
+*Respuesta (Error - 409 Conflict):*
+include::{snippets}/sensor/create-duplicate-error/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor/create-duplicate-error/response-fields.adoc[]
+
+*Ejemplo cURL (Nombre Duplicado):*
+include::{snippets}/sensor/create-duplicate-error/curl-request.adoc[]
+
+// (Include sections for Invalid Key and Missing Key for POST / similar to locations.adoc if desired/generated)
+
+// #################################################################
+[[sensor-update]]
+==== Actualizar `(PUT /{id})`
+
+Modifica los datos de un sensor existente, siempre que pertenezca a la compañía autenticada. Permite cambiar nombre, categoría, metadatos y la ubicación asociada (siempre que la nueva ubicación también pertenezca a la compañía).
+
+*Descripción:*
+Una petición `PUT` a `/api/v1/sensors/{id}` con los nuevos datos en el cuerpo. Requiere la API Key de la compañía propietaria.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/update/request-headers.adoc[]
+// Query parameters snippet not applicable
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/update/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor/update/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/sensor/update/request-fields.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve el objeto JSON del sensor con los datos actualizados. La API Key del sensor no cambia.
+include::{snippets}/sensor/update/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/sensor/update/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/update/curl-request.adoc[]
+
+// #################################################################
+[[sensor-update-sensor-not-found]]
+===== Error - Sensor No Encontrado / No Pertenece `(PUT /{id})`
+
+Si el `id` del sensor no existe o no pertenece a la compañía autenticada, el servidor responderá con `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/update-sensor-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/update-sensor-not-found/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor/update-sensor-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+include::{snippets}/sensor/update-sensor-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor/update-sensor-not-found/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/update-sensor-not-found/curl-request.adoc[]
+
+// #################################################################
+[[sensor-update-new-location-not-found]]
+===== Error - Nueva Ubicación No Encontrada / No Pertenece `(PUT /{id})`
+
+Si el `locationId` proporcionado en el cuerpo para la actualización no existe o no pertenece a la compañía autenticada, el servidor responderá con `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/update-new-location-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/update-new-location-not-found/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor/update-new-location-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+include::{snippets}/sensor/update-new-location-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor/update-new-location-not-found/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/update-new-location-not-found/curl-request.adoc[]
+
+// (Include sections for Invalid Key, Missing Key, Validation Error, Duplicate Name for PUT /{id} similar to POST)
+
+// #################################################################
+[[sensor-delete]]
+==== Eliminar `(DELETE /{id})`
+
+Elimina permanentemente un sensor del sistema, siempre que pertenezca a la compañía autenticada. Acción irreversible.
+
+*Descripción:*
+Una petición `DELETE` a `/api/v1/sensors/{id}`. Requiere la API Key de la compañía propietaria.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/delete/request-headers.adoc[]
+// Query parameters snippet not applicable
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/delete/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor/delete/http-request.adoc[]
+
+*Respuesta (Éxito - 204 No Content):*
+Si la eliminación es exitosa, el servidor responde con un código `204 No Content` y sin cuerpo en la respuesta.
+include::{snippets}/sensor/delete/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/delete/curl-request.adoc[]
+
+// #################################################################
+[[sensor-delete-not-found]]
+===== Error - No Encontrado / No Pertenece `(DELETE /{id})`
+
+Si el `id` del sensor no existe o no pertenece a la compañía autenticada, el servidor responderá con `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor/delete-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor/delete-not-found/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor/delete-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+include::{snippets}/sensor/delete-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor/delete-not-found/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor/delete-not-found/curl-request.adoc[]

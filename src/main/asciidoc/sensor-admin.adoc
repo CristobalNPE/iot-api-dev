@@ -1,0 +1,171 @@
+[[admin-sensors]]
+=== Sensores (Admin)
+
+Endpoints para la gestión completa de los sensores dentro del sistema. Estas operaciones están restringidas a usuarios con el rol `ADMIN` y permiten asociar sensores a cualquier ubicación existente.
+
+// #################################################################
+[[admin-create-sensor]]
+==== Crear `(POST /)`
+
+Registra un nuevo sensor en el sistema, asociándolo a una ubicación existente. La API Key del sensor es generada automáticamente por el servidor.
+
+*Descripción:*
+Una petición `POST` a la ruta base `/api/v1/admin/sensors` con los datos requeridos en el cuerpo creará una nueva entidad de sensor. Se debe proporcionar un `locationId` válido.
+
+*Petición:*
+include::{snippets}/admin/create-sensor/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/admin/create-sensor/request-fields.adoc[]
+
+*Respuesta (Éxito - 201 Created):*
+Devuelve los detalles del sensor recién creado, incluyendo su ID asignado y la API Key generada.
+include::{snippets}/admin/create-sensor/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/admin/create-sensor/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/create-sensor/curl-request.adoc[]
+
+// #################################################################
+[[admin-create-sensor-invalid-location]]
+==== Error - Ubicación Inválida `(POST /)`
+
+Si se intenta crear un sensor proporcionando un `locationId` que no corresponde a una ubicación existente en el sistema, el servidor responderá con un error `404 Not Found`.
+
+*Petición (con locationId inválido):*
+Este ejemplo muestra una petición donde `locationId` es 999 (asumiendo que no existe).
+include::{snippets}/admin/create-sensor-invalid-location/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error indicando que la ubicación referenciada no fue encontrada.
+include::{snippets}/admin/create-sensor-invalid-location/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+Describe la estructura de la respuesta de error 404 (usando `domainErrorResponseFields`).
+include::{snippets}/admin/create-sensor-invalid-location/response-fields.adoc[]
+
+*Ejemplo cURL (con locationId inválido):*
+include::{snippets}/admin/create-sensor-invalid-location/curl-request.adoc[]
+
+// #################################################################
+[[admin-get-all-sensors]]
+==== Obtener Todos `(GET /)`
+
+Recupera una lista completa de todos los sensores registrados en el sistema, independientemente de su ubicación o compañía.
+
+*Descripción:*
+Una petición `GET` a la ruta base `/api/v1/admin/sensors` devuelve un array JSON con todos los sensores.
+
+*Petición:*
+include::{snippets}/admin/get-all-sensors/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un array JSON, donde cada objeto representa un sensor.
+include::{snippets}/admin/get-all-sensors/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+Describe la estructura del array y los campos de cada objeto sensor dentro del array.
+include::{snippets}/admin/get-all-sensors/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/get-all-sensors/curl-request.adoc[]
+
+// #################################################################
+[[admin-get-sensor-by-id]]
+==== Obtener por ID `(GET /{id})`
+
+Recupera los detalles de un sensor específico utilizando su identificador único.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/admin/sensors/{id}` donde `{id}` es el ID numérico del sensor.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/get-sensor-by-id/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/admin/get-sensor-by-id/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un objeto JSON con los detalles del sensor encontrado.
+include::{snippets}/admin/get-sensor-by-id/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/admin/get-sensor-by-id/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/get-sensor-by-id/curl-request.adoc[]
+
+// #################################################################
+[[admin-get-sensor-by-id-not-found]]
+==== Error - No Encontrado `(GET /{id})`
+
+Si se solicita un sensor con un ID que no existe en el sistema, el servidor responderá con un error `404 Not Found`.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/get-sensor-by-id-not-found/path-parameters.adoc[]
+
+*Petición (ID Inexistente):*
+include::{snippets}/admin/get-sensor-by-id-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error indicando que el recurso no fue encontrado.
+include::{snippets}/admin/get-sensor-by-id-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+Describe la estructura de la respuesta de error 404 (usando `domainErrorResponseFields`).
+include::{snippets}/admin/get-sensor-by-id-not-found/response-fields.adoc[]
+
+*Ejemplo cURL (ID Inexistente):*
+include::{snippets}/admin/get-sensor-by-id-not-found/curl-request.adoc[]
+
+// #################################################################
+[[admin-update-sensor]]
+==== Actualizar `(PUT /{id})`
+
+Modifica los datos de un sensor existente, identificado por su ID. Permite cambiar el nombre, categoría, metadatos y la ubicación asociada.
+
+*Descripción:*
+Una petición `PUT` a `/api/v1/admin/sensors/{id}` con los nuevos datos en el cuerpo.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/update-sensor/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/admin/update-sensor/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/admin/update-sensor/request-fields.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve el objeto JSON del sensor con los datos actualizados.
+include::{snippets}/admin/update-sensor/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/admin/update-sensor/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/update-sensor/curl-request.adoc[]
+
+// #################################################################
+[[admin-delete-sensor]]
+==== Eliminar `(DELETE /{id})`
+
+Elimina permanentemente un sensor del sistema utilizando su ID. Acción irreversible.
+
+*Descripción:*
+Una petición `DELETE` a `/api/v1/admin/sensors/{id}`.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/delete-sensor/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/admin/delete-sensor/http-request.adoc[]
+
+*Respuesta (Éxito - 204 No Content):*
+Si la eliminación es exitosa, el servidor responde con un código `204 No Content` y sin cuerpo en la respuesta.
+include::{snippets}/admin/delete-sensor/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/delete-sensor/curl-request.adoc[]

@@ -1,0 +1,444 @@
+[[locations-company]]
+=== Ubicaciones (Compañía)
+
+Endpoints para gestionar las ubicaciones asociadas a la compañía identificada por la API Key proporcionada.
+
+*Autenticación:*
+Todas las peticiones a estos endpoints requieren una API Key válida de la compañía. La clave puede ser proporcionada de dos maneras (el header tiene prioridad):
+
+1.  Header HTTP: `X-Company-Api-Key: <tu_api_key>`
+2.  Parámetro de Consulta URL: `?company_api_key=<tu_api_key>`
+
+// #################################################################
+[[location-get-all-paged]]
+==== Obtener Paginadas `(GET /)`
+
+Recupera una lista paginada de todas las ubicaciones asociadas a la compañía autenticada.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/locations`. Soporta parámetros estándar de paginación (ver <<pagination, Paginación>>). Requiere la API Key de la compañía.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/get-all-paged/request-headers.adoc[]
+include::{snippets}/location/get-all-paged/query-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/get-all-paged/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un objeto JSON con la estructura de paginación y la lista de ubicaciones en el campo `content`.
+include::{snippets}/location/get-all-paged/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+Describe la estructura de la respuesta paginada, incluyendo los campos dentro de `content` y el objeto `page`.
+include::{snippets}/location/get-all-paged/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/get-all-paged/curl-request.adoc[]
+
+// #################################################################
+[[location-get-all-locations-invalid-key]]
+===== Error - API Key Inválida `(GET /)`
+
+Si la API Key proporcionada (header o parámetro) no existe, el servidor responderá con un error `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/location/get-all-locations-invalid-key/request-headers.adoc[]
+
+*Petición (Ejemplo Header):*
+include::{snippets}/location/get-all-locations-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+El servidor responde con 401 Unauthorized. El cuerpo de la respuesta puede estar vacío o contener detalles específicos del error de autenticación.
+include::{snippets}/location/get-all-locations-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/get-all-locations-invalid-key/curl-request.adoc[]
+
+// #################################################################
+[[location-get-all-locations-missing-key]]
+===== Error - API Key Faltante `(GET /)`
+
+Si no se proporciona la API Key (ni header ni parámetro), el servidor responderá con un error `401 Unauthorized`.
+
+*Petición:*
+include::{snippets}/location/get-all-locations-missing-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+El servidor responde con 401 Unauthorized.
+include::{snippets}/location/get-all-locations-missing-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/get-all-locations-missing-key/curl-request.adoc[]
+
+
+// #################################################################
+[[location-get-by-id]]
+==== Obtener por ID `(GET /{locationId})`
+
+Recupera los detalles de una ubicación específica, siempre que pertenezca a la compañía autenticada.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/locations/{locationId}`. Requiere la API Key de la compañía propietaria.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/get-by-id/request-headers.adoc[]
+
+
+*Parámetros de Ruta:*
+include::{snippets}/location/get-by-id/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/get-by-id/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un objeto JSON con los detalles de la ubicación encontrada.
+include::{snippets}/location/get-by-id/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/location/get-by-id/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/get-by-id/curl-request.adoc[]
+
+// #################################################################
+[[location-get-by-id-not-found]]
+===== Error - No Encontrada / No Pertenece `(GET /{locationId})`
+
+Si la `locationId` no existe o no pertenece a la compañía autenticada, el servidor responderá con un error `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/get-by-id-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/location/get-by-id-not-found/path-parameters.adoc[]
+
+*Petición (ID Inexistente o Incorrecto):*
+include::{snippets}/location/get-by-id-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error 404.
+include::{snippets}/location/get-by-id-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+Describe la estructura de la respuesta de error 404.
+include::{snippets}/location/get-by-id-not-found/response-fields.adoc[]
+
+*Ejemplo cURL (ID Inexistente o Incorrecto):*
+include::{snippets}/location/get-by-id-not-found/curl-request.adoc[]
+
+// #################################################################
+[[location-get-by-id-invalid-key]]
+===== Error - API Key Inválida `(GET /{locationId})`
+
+Si la API Key proporcionada no es válida, el servidor responderá con `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/location/get-by-id-invalid-key/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/location/get-by-id-invalid-key/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/get-by-id-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/get-by-id-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/get-by-id-invalid-key/curl-request.adoc[]
+
+// #################################################################
+[[location-get-by-id-missing-key]]
+===== Error - API Key Faltante `(GET /{locationId})`
+
+Si no se proporciona la API Key, el servidor responderá con `401 Unauthorized`.
+
+*Parámetros de Ruta:*
+include::{snippets}/location/get-by-id-missing-key/path-parameters.adoc[]  o es relevante
+
+*Petición:*
+include::{snippets}/location/get-by-id-missing-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/get-by-id-missing-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/get-by-id-missing-key/curl-request.adoc[]
+
+
+// #################################################################
+[[location-create]]
+==== Crear `(POST /)`
+
+Crea una nueva ubicación y la asocia automáticamente a la compañía autenticada.
+
+*Descripción:*
+Una petición `POST` a `/api/v1/locations` con los detalles de la nueva ubicación en el cuerpo. Requiere la API Key de la compañía.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/create/request-headers.adoc[]
+include::{snippets}/location/create/query-parameters.adoc[] // Incluye _csrf ignorado y company_api_key opcional
+
+*Petición:*
+include::{snippets}/location/create/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/location/create/request-fields.adoc[]
+
+*Respuesta (Éxito - 201 Created):*
+Devuelve los detalles de la ubicación recién creada, incluyendo su ID asignado.
+include::{snippets}/location/create/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/location/create/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/create/curl-request.adoc[]
+
+// #################################################################
+[[location-create-validation-error]]
+===== Error de Validación `(POST /)`
+
+Si faltan campos obligatorios o tienen formato incorrecto en el cuerpo de la petición, el servidor responderá con `400 Bad Request`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/create-validation-error/request-headers.adoc[]
+
+*Petición (Inválida):*
+Este ejemplo muestra una petición donde `name` es una cadena vacía.
+include::{snippets}/location/create-validation-error/http-request.adoc[]
+
+*Respuesta (Error - 400 Bad Request):*
+Devuelve un mapa JSON con los campos erróneos y los mensajes de validación.
+include::{snippets}/location/create-validation-error/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/location/create-validation-error/response-fields.adoc[]
+
+*Ejemplo cURL (Inválido):*
+include::{snippets}/location/create-validation-error/curl-request.adoc[]
+
+// #################################################################
+[[location-create-invalid-key]]
+===== Error - API Key Inválida `(POST /)`
+
+Si la API Key proporcionada no es válida, el servidor responderá con `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/location/create-invalid-key/request-headers.adoc[]
+
+*Petición:*
+include::{snippets}/location/create-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/create-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/create-invalid-key/curl-request.adoc[]
+
+// #################################################################
+[[location-create-missing-key]]
+===== Error - API Key Faltante `(POST /)`
+
+Si no se proporciona la API Key, el servidor responderá con `401 Unauthorized`.
+
+*Petición:*
+include::{snippets}/location/create-missing-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/create-missing-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/create-missing-key/curl-request.adoc[]
+
+
+// #################################################################
+[[location-update]]
+==== Actualizar `(PUT /{locationId})`
+
+Modifica los datos de una ubicación existente, siempre que pertenezca a la compañía autenticada.
+
+*Descripción:*
+Una petición `PUT` a `/api/v1/locations/{locationId}` con los nuevos datos en el cuerpo. Requiere la API Key de la compañía propietaria.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/update/request-headers.adoc[]
+include::{snippets}/location/update/query-parameters.adoc[] // Incluye _csrf ignorado y company_api_key opcional
+
+*Parámetros de Ruta:*
+include::{snippets}/location/update/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/update/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/location/update/request-fields.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve el objeto JSON de la ubicación con los datos actualizados.
+include::{snippets}/location/update/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/location/update/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/update/curl-request.adoc[]
+
+// #################################################################
+[[location-update-not-found]]
+===== Error - No Encontrada / No Pertenece `(PUT /{locationId})`
+
+Si la `locationId` no existe o no pertenece a la compañía autenticada, el servidor responderá con un error `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/update-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/location/update-not-found/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/update-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error 404.
+include::{snippets}/location/update-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/location/update-not-found/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/update-not-found/curl-request.adoc[]
+
+// #################################################################
+[[location-update-invalid-key]]
+===== Error - API Key Inválida `(PUT /{locationId})`
+
+Si la API Key proporcionada no es válida, el servidor responderá con `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/location/update-invalid-key/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/location/update-invalid-key/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/update-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/update-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/update-invalid-key/curl-request.adoc[]
+
+// #################################################################
+[[location-update-missing-key]]
+===== Error - API Key Faltante `(PUT /{locationId})`
+
+Si no se proporciona la API Key, el servidor responderá con `401 Unauthorized`.
+
+*Petición:*
+include::{snippets}/location/update-missing-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/update-missing-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/update-missing-key/curl-request.adoc[]
+
+
+// #################################################################
+[[location-delete]]
+==== Eliminar `(DELETE /{locationId})`
+
+Elimina permanentemente una ubicación del sistema, siempre que pertenezca a la compañía autenticada. Acción irreversible.
+
+*Descripción:*
+Una petición `DELETE` a `/api/v1/locations/{locationId}`. Requiere la API Key de la compañía propietaria.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/delete/request-headers.adoc[]
+include::{snippets}/location/delete/query-parameters.adoc[] // Incluye company_api_key opcional (y _csrf ignorado)
+
+*Parámetros de Ruta:*
+include::{snippets}/location/delete/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/delete/http-request.adoc[]
+
+*Respuesta (Éxito - 204 No Content):*
+Si la eliminación es exitosa, el servidor responde con un código `204 No Content` y sin cuerpo en la respuesta.
+include::{snippets}/location/delete/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/delete/curl-request.adoc[]
+
+// #################################################################
+[[location-delete-not-found]]
+===== Error - No Encontrada / No Pertenece `(DELETE /{locationId})`
+
+Si la `locationId` no existe o no pertenece a la compañía autenticada, el servidor responderá con un error `404 Not Found`.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/location/delete-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/location/delete-not-found/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/delete-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error 404.
+include::{snippets}/location/delete-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/location/delete-not-found/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/delete-not-found/curl-request.adoc[]
+
+// #################################################################
+[[location-delete-invalid-key]]
+===== Error - API Key Inválida `(DELETE /{locationId})`
+
+Si la API Key proporcionada no es válida, el servidor responderá con `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/location/delete-invalid-key/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/location/delete-invalid-key/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/location/delete-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/delete-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/delete-invalid-key/curl-request.adoc[]
+
+// #################################################################
+[[location-delete-missing-key]]
+===== Error - API Key Faltante `(DELETE /{locationId})`
+
+Si no se proporciona la API Key, el servidor responderá con `401 Unauthorized`.
+
+*Petición:*
+include::{snippets}/location/delete-missing-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/location/delete-missing-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/location/delete-missing-key/curl-request.adoc[]
