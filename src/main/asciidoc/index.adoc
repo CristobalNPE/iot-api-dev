@@ -52,3 +52,7 @@ include::location-admin.adoc[]
 include::sensor-admin.adoc[]
 
 include::locations.adoc[]
+
+include::sensors.adoc[]
+
+include::sensor-data.adoc[]
