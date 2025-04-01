@@ -16,7 +16,7 @@ Todas las peticiones a estos endpoints requieren una API Key válida de la compa
 Recupera una lista de todos los sensores asociados a la compañía autenticada.
 
 *Descripción:*
-Una petición `GET` a `/api/v1/sensors`. Requiere la API Key de la compañía. Este endpoint *no* está paginado actualmente.
+Una petición `GET` a `/api/v1/sensors`. Requiere la API Key de la compañía.
 
 *Autenticación (Header o Parámetro):*
 _(Ver sección de autenticación al inicio)_
