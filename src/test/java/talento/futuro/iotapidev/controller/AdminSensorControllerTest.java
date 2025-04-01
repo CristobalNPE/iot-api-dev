@@ -16,7 +16,6 @@ import talento.futuro.iotapidev.dto.SensorResponse;
 import talento.futuro.iotapidev.exception.LocationNotFoundException;
 import talento.futuro.iotapidev.exception.SensorNotFoundException;
 import talento.futuro.iotapidev.service.AdminSensorService;
-import talento.futuro.iotapidev.service.SensorService;
 
 import java.util.List;
 
