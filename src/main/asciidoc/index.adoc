@@ -10,7 +10,7 @@
 [[overview]]
 == Descripción
 
-This document describes the API endpoints available for an IoT service.
+Este documento detalla los endpoints de la API disponibles para un servicio de IoT. Se incluye información sobre sus funcionalidades, métodos de acceso y los datos que pueden enviarse o recibirse a través de la API.
 
 [[auth]]
 == Autenticación y Autorización
