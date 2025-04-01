@@ -1,5 +1,6 @@
 package talento.futuro.iotapidev.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public class SensorDataController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerPayload(@RequestBody Payload payload) {
+    public void registerPayload(@RequestBody @Valid Payload payload) {
         log.info("\n🟢 Payload recibido\n {}", payload);
         sensorDataService.processPayload(payload);
     }
