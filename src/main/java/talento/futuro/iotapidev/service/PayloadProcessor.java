@@ -43,17 +43,8 @@ public class PayloadProcessor {
 
     public void extractSensorData(String message) {
         try {
-            JsonNode root = objectMapper.readTree(message);
-
-            String apiKey = root.get("api_key").asText();
-
-            Sensor sensor = sensorRepository.findByApiKey(apiKey)
-                                            .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
-
-            JsonNode dataArray = root.get("json_data");
-
-            extractMeasurements(dataArray, sensor);
-
+            Payload payload = objectMapper.readValue(message, Payload.class);
+            extractSensorData(payload);
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
