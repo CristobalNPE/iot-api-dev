@@ -52,4 +52,14 @@ public class SensorDocumentation {
             fieldWithPath("[].meta").description("Metadatos del sensor."),
             fieldWithPath("[].apiKey").description("API Key del sensor.")
     };
+
+    public static final FieldDescriptor[] sensorListResponseFieldsPaginated = {
+            fieldWithPath("content[]").description("Array JSON que contiene todos los sensores obtenibles."),
+            fieldWithPath("content[].id").description("ID del sensor."),
+            fieldWithPath("content[].locationId").description("ID de la ubicación asociada."),
+            fieldWithPath("content[].name").description("Nombre del sensor."),
+            fieldWithPath("content[].category").description("Categoría del sensor."),
+            fieldWithPath("content[].meta").description("Metadatos del sensor."),
+            fieldWithPath("content[].apiKey").description("API Key del sensor.")
+    };
 }

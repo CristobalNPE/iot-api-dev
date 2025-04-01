@@ -2,6 +2,10 @@ package talento.futuro.iotapidev.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -15,7 +19,6 @@ import talento.futuro.iotapidev.service.SensorService;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -30,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static talento.futuro.iotapidev.docs.SensorDocumentation.*;
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Errors.domainErrorResponseFields;
+import static talento.futuro.iotapidev.docs.SharedDocumentation.Pagination.getPageResponseFields;
 import static talento.futuro.iotapidev.utils.SensorTestDataFactory.*;
 
 @WithMockUser(roles = "ADMIN")
@@ -83,24 +87,27 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
     @Test
     void getAllSensors() throws Exception {
 
+        Pageable requestedPageable = PageRequest.of(0, 20);
+        List<SensorResponse> sensorsList = createDefaultSensorResponseList();
 
-        List<SensorResponse> expectedResponse = createDefaultSensorResponseList();
-        when(sensorService.adminFindAllSensors()).thenReturn(expectedResponse);
+        Page<SensorResponse> expectedPage = new PageImpl<>(sensorsList, requestedPageable, sensorsList.size());
+
+        when(sensorService.adminFindAllSensors(any(Pageable.class))).thenReturn(expectedPage);
 
         mockMvc.perform(get(ADMIN_SENSOR_PATH)
                        .accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", hasSize(expectedResponse.size())))
-               .andExpect(jsonPath("$[0].id").value(expectedResponse.get(0).id()))
-               .andExpect(jsonPath("$[0].locationId").value(expectedResponse.get(0).locationId()))
-               .andExpect(jsonPath("$[0].name").value(expectedResponse.get(0).name()))
-               .andExpect(jsonPath("$[0].category").value(expectedResponse.get(0).category()))
-               .andExpect(jsonPath("$[0].meta").value(expectedResponse.get(0).meta()))
-               .andExpect(jsonPath("$[0].apiKey").value(expectedResponse.get(0).apiKey()))
-               .andExpect(jsonPath("$[1].name").value(expectedResponse.get(1).name()))
+               .andExpect(jsonPath("$.content[0].id").value(expectedPage.getContent().get(0).id()))
+               .andExpect(jsonPath("$.content[0].locationId").value(expectedPage.getContent().get(0).locationId()))
+               .andExpect(jsonPath("$.content[0].name").value(expectedPage.getContent().get(0).name()))
+               .andExpect(jsonPath("$.content[0].category").value(expectedPage.getContent().get(0).category()))
+               .andExpect(jsonPath("$.content[0].meta").value(expectedPage.getContent().get(0).meta()))
+               .andExpect(jsonPath("$.content[0].apiKey").value(expectedPage.getContent().get(0).apiKey()))
+               .andExpect(jsonPath("$.content[1].name").value(expectedPage.getContent().get(1).name()))
                .andDo(document("admin/get-all-sensors",
-                       responseFields(sensorListResponseFields)
-               ));
+                       responseFields(getPageResponseFields(
+                               "Lista paginada de sensores registrados en el sistema.",
+                               sensorListResponseFieldsPaginated))));
 
     }
 

@@ -2,6 +2,10 @@ package talento.futuro.iotapidev.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -15,7 +19,6 @@ import talento.futuro.iotapidev.service.LocationService;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -25,13 +28,13 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static talento.futuro.iotapidev.docs.LocationDocumentation.*;
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Errors.domainErrorResponseFields;
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Errors.validationErrorResponseFields;
+import static talento.futuro.iotapidev.docs.SharedDocumentation.Pagination.getPageResponseFields;
 import static talento.futuro.iotapidev.utils.LocationTestDataFactory.*;
 
 @WebMvcTest(AdminLocationController.class)
@@ -96,23 +99,27 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
     @Test
     void getAllLocations() throws Exception {
 
-        List<LocationResponse> expectedResponse = createDefaultLocationResponseList();
-        when(locationService.adminFindAllLocations()).thenReturn(expectedResponse);
+        Pageable requestedPageable = PageRequest.of(0, 20);
+        List<LocationResponse> locationsList = createDefaultLocationResponseList();
+        Page<LocationResponse> expectedPage = new PageImpl<>(locationsList, requestedPageable, locationsList.size());
+
+        when(locationService.adminFindAllLocations(any(Pageable.class))).thenReturn(expectedPage);
 
         mockMvc.perform(get(ADMIN_LOCATION_PATH)
                        .accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", hasSize(expectedResponse.size())))
-               .andExpect(jsonPath("$[0].id").value(expectedResponse.get(0).id()))
-               .andExpect(jsonPath("$[0].name").value(expectedResponse.get(0).name()))
-               .andExpect(jsonPath("$[0].country").value(expectedResponse.get(0).country()))
-               .andExpect(jsonPath("$[0].city").value(expectedResponse.get(0).city()))
-               .andExpect(jsonPath("$[0].meta").value(expectedResponse.get(0).meta()))
-               .andExpect(jsonPath("$[1].name").value(expectedResponse.get(1).name()))
-               .andExpect(jsonPath("$[2].name").value(expectedResponse.get(2).name()))
+               .andExpect(jsonPath("$.content[0].id").value(expectedPage.getContent().get(0).id()))
+               .andExpect(jsonPath("$.content[0].name").value(expectedPage.getContent().get(0).name()))
+               .andExpect(jsonPath("$.content[0].country").value(expectedPage.getContent().get(0).country()))
+               .andExpect(jsonPath("$.content[0].city").value(expectedPage.getContent().get(0).city()))
+               .andExpect(jsonPath("$.content[0].meta").value(expectedPage.getContent().get(0).meta()))
+               .andExpect(jsonPath("$.content[1].name").value(expectedPage.getContent().get(1).name()))
+               .andExpect(jsonPath("$.content[2].name").value(expectedPage.getContent().get(2).name()))
                .andDo(document("admin/get-all-locations",
-                       responseFields(locationListResponseFields)
-               ));
+                       responseFields(getPageResponseFields(
+                               "Lista paginada de ubicaciones registradas en el sistema.", locationListResponseFieldsPaginated)
+                       ))
+               );
     }
 
     @Test

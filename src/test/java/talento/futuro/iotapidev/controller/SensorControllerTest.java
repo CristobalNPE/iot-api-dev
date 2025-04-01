@@ -2,6 +2,10 @@ package talento.futuro.iotapidev.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import talento.futuro.iotapidev.constants.ApiBase;
@@ -17,7 +21,6 @@ import talento.futuro.iotapidev.utils.WithMockCompany;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -36,6 +39,7 @@ import static talento.futuro.iotapidev.docs.SharedDocumentation.Authentication.c
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Authentication.companyApiKeyHeaderInvalid;
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Errors.domainErrorResponseFields;
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Errors.validationErrorResponseFields;
+import static talento.futuro.iotapidev.docs.SharedDocumentation.Pagination.getPageResponseFields;
 import static talento.futuro.iotapidev.utils.SensorTestDataFactory.*;
 import static talento.futuro.iotapidev.utils.TestUtils.generateApiKeyForTests;
 
@@ -51,24 +55,25 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
     @WithMockCompany(apiKey = VALID_COMPANY_API_KEY, companyId = MOCK_COMPANY_ID)
     void getAllSensors_Success() throws Exception {
 
-
-        List<SensorResponse> expectedResponse = createDefaultSensorResponseList();
-        when(sensorService.getAllSensorForCompany()).thenReturn(expectedResponse);
-
+        Pageable requestedPageable = PageRequest.of(0, 20);
+        List<SensorResponse> sensorsList = createDefaultSensorResponseList();
+        Page<SensorResponse> expectedPage = new PageImpl<>(sensorsList, requestedPageable, sensorsList.size());
+        when(sensorService.getAllSensorForCompany(any(Pageable.class))).thenReturn(expectedPage);
 
 
         mockMvc.perform(get(SENSOR_PATH)
                        .accept(MediaType.APPLICATION_JSON)
                        .header(COMPANY_API_KEY_HEADER, VALID_COMPANY_API_KEY))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", hasSize(expectedResponse.size())))
-               .andExpect(jsonPath("$[0].name").value(expectedResponse.get(0).name()))
-               .andExpect(jsonPath("$[0].apiKey").value(expectedResponse.get(0).apiKey()))
-               .andExpect(jsonPath("$[1].apiKey").value(expectedResponse.get(1).apiKey()))
-               .andExpect(jsonPath("$[2].category").value(expectedResponse.get(2).category()))
+               .andExpect(jsonPath("$.content[0].name").value(expectedPage.getContent().get(0).name()))
+               .andExpect(jsonPath("$.content[0].apiKey").value(expectedPage.getContent().get(0).apiKey()))
+               .andExpect(jsonPath("$.content[1].apiKey").value(expectedPage.getContent().get(1).apiKey()))
+               .andExpect(jsonPath("$.content[2].category").value(expectedPage.getContent().get(2).category()))
                .andDo(document("sensor/get-all",
                        requestHeaders(companyApiKeyHeader),
-                       responseFields(sensorListResponseFields)));
+                       responseFields(getPageResponseFields(
+                               "Lista paginada de sensores pertenecientes a la compañía autenticada.",
+                               sensorListResponseFieldsPaginated))));
     }
 
     @Test
