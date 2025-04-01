@@ -1,13 +1,14 @@
 package talento.futuro.iotapidev.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import talento.futuro.iotapidev.model.SensorData;
 
 import java.util.Optional;
 
-public interface SensorDataRepository extends JpaRepository<SensorData, Integer> {
+public interface SensorDataRepository extends JpaRepository<SensorData, Integer>, JpaSpecificationExecutor<SensorData> {
 
     Optional<SensorData> findBySensor_Location_Company_Id(Integer integer);
 

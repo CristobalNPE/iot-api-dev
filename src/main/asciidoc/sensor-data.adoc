@@ -1,0 +1,177 @@
+[[sensor-data]]
+=== Datos de Sensores
+
+Endpoints para registrar y consultar datos (mediciones) de los sensores.
+
+*Autenticación:*
+La autenticación varía según el endpoint:
+
+*   `POST /api/v1/sensor_data`: Requiere la **API Key del sensor** específico dentro del *cuerpo* de la petición (payload JSON).
+*   `GET /api/v1/sensor_data`: Requiere la **API Key de la compañía** propietaria de los sensores, proporcionada vía Header HTTP (`X-Company-Api-Key: <tu_api_key>`) o Parámetro de Consulta (`?company_api_key=<tu_api_key>`). El header tiene prioridad.
+*   `DELETE /api/v1/sensor_data/{sensorId}`: Requiere la **API Key de la compañía** propietaria del sensor, proporcionada vía Header HTTP o Parámetro de Consulta.
+
+// #################################################################
+[[sensor-data-register]]
+==== Registrar Mediciones `(POST /)`
+
+Registra una o más mediciones enviadas por un dispositivo IoT (sensor).
+
+*Descripción:*
+Una petición `POST` a `/api/v1/sensor_data`. El cuerpo debe ser un JSON que contenga la `api_key` del sensor y un campo `json_data` con un array de objetos de medición. Cada objeto de medición debe incluir un campo `datetime` (timestamp EPOCH).
+
+*Autenticación (Payload):*
+La autenticación se realiza mediante el campo `api_key` dentro del cuerpo JSON, que debe corresponder a un sensor existente.
+
+*Petición:*
+include::{snippets}/sensor-data/register-payload/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/sensor-data/register-payload/request-fields.adoc[]
+
+*Respuesta (Éxito - 201 Created):*
+Si el registro es exitoso, el servidor responde con `201 Created` sin cuerpo en la respuesta.
+include::{snippets}/sensor-data/register-payload/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor-data/register-payload/curl-request.adoc[]
+
+// #################################################################
+// [[sensor-data-register-payload-invalid-key]]
+// ===== Error - API Key de Sensor Inválida `(POST /)`
+//
+// Si la `api_key` proporcionada en el cuerpo JSON no corresponde a ningún sensor registrado, el servidor responderá con `400 Bad Request`.
+//
+// *Petición (API Key Inválida en Payload):*
+// include::{snippets}/sensor-data/register-payload-invalid-key/http-request.adoc[]
+//
+// *Respuesta (Error - 400 Bad Request):*
+// Devuelve un objeto JSON estándar de error.
+// include::{snippets}/sensor-data/register-payload-invalid-key/http-response.adoc[]
+//
+// *Campos de Respuesta (Error):*
+// include::{snippets}/sensor-data/register-payload-invalid-key/response-fields.adoc[]
+//
+// *Ejemplo cURL (API Key Inválida en Payload):*
+// include::{snippets}/sensor-data/register-payload-invalid-key/curl-request.adoc[]
+//
+// // #################################################################
+// [[sensor-data-register-payload-invalid-json]]
+// ===== Error - JSON Inválido `(POST /)`
+//
+// Si el cuerpo de la petición no es un JSON válido o le faltan campos requeridos (`api_key`, `json_data`), el servidor responderá con `400 Bad Request`.
+//
+// *Petición (JSON Inválido):*
+// include::{snippets}/sensor-data/register-payload-invalid-json/http-request.adoc[]
+//
+// *Respuesta (Error - 400 Bad Request):*
+// La respuesta puede variar según el error exacto de parseo, pero generalmente será un 400.
+// include::{snippets}/sensor-data/register-payload-invalid-json/http-response.adoc[]
+//
+// *Ejemplo cURL (JSON Inválido):*
+// include::{snippets}/sensor-data/register-payload-invalid-json/curl-request.adoc[]
+//
+// // #################################################################
+[[sensor-data-search]]
+==== Consultar Datos `(GET /)`
+
+Busca y recupera datos históricos de mediciones para uno o más sensores de la compañía autenticada, opcionalmente filtrados por rango de tiempo y IDs de sensor.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/sensor_data`. Requiere la API Key de la compañía y soporta parámetros de consulta para filtrado y paginación.
+
+*Autenticación (Compañía - Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor-data/search/request-headers.adoc[]
+include::{snippets}/sensor-data/search/query-parameters.adoc[]
+
+*Parámetros de Consulta:*
+Describe los parámetros de filtrado (`from`, `to`, `sensor_id`) y paginación (`page`, `size`, `sort`).
+include::{snippets}/sensor-data/search/query-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor-data/search/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un objeto JSON con la estructura de paginación y la lista de datos de sensores encontrados en el campo `content`.
+include::{snippets}/sensor-data/search/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+Describe la estructura de la respuesta paginada.
+include::{snippets}/sensor-data/search/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor-data/search/curl-request.adoc[]
+
+// #################################################################
+[[sensor-data-search-invalid-key]]
+===== Error - API Key de Compañía Inválida `(GET /)`
+
+Si la API Key de la *compañía* proporcionada (header o parámetro) no existe o es inválida, el servidor responderá con `401 Unauthorized`.
+
+*Autenticación (Ejemplo Header Inválido):*
+include::{snippets}/sensor-data/search-invalid-key/request-headers.adoc[]
+
+*Petición:*
+include::{snippets}/sensor-data/search-invalid-key/http-request.adoc[]
+
+*Respuesta (Error - 401 Unauthorized):*
+include::{snippets}/sensor-data/search-invalid-key/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor-data/search-invalid-key/curl-request.adoc[]
+
+// (Include section for Missing Company API Key if desired/generated)
+
+// #################################################################
+[[sensor-data-delete]]
+==== Eliminar Datos por Sensor `(DELETE /{sensorId})`
+
+Elimina *todos* los datos históricos registrados para un sensor específico perteneciente a la compañía autenticada. ¡Acción irreversible!
+
+*Descripción:*
+Una petición `DELETE` a `/api/v1/sensor_data/{sensorId}`. Requiere la API Key de la compañía propietaria del sensor.
+
+*Autenticación (Compañía - Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor-data/delete-all-data/request-headers.adoc[]
+// Query parameters snippet not applicable
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor-data/delete-all-data/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor-data/delete-all-data/http-request.adoc[]
+
+*Respuesta (Éxito - 204 No Content):*
+Si la eliminación es exitosa (o si el sensor no tenía datos), el servidor responde con `204 No Content` y sin cuerpo.
+include::{snippets}/sensor-data/delete-all-data/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor-data/delete-all-data/curl-request.adoc[]
+
+// #################################################################
+[[sensor-data-delete-not-found]]
+===== Error - Sensor No Encontrado / No Pertenece `(DELETE /{sensorId})`
+
+Si el `sensorId` no existe o no pertenece a la compañía autenticada, el servicio podría responder con `404 Not Found` (dependiendo de la implementación exacta del servicio - alternativamente, podría devolver 204 si simplemente no encuentra datos que borrar para ese ID bajo esa compañía). Este ejemplo asume 404 si el *sensor* no es válido para la compañía.
+
+*Autenticación (Header o Parámetro):*
+_(Ver sección de autenticación al inicio)_
+include::{snippets}/sensor-data/delete-all-data-not-found/request-headers.adoc[]
+
+*Parámetros de Ruta:*
+include::{snippets}/sensor-data/delete-all-data-not-found/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/sensor-data/delete-all-data-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+include::{snippets}/sensor-data/delete-all-data-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+include::{snippets}/sensor-data/delete-all-data-not-found/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/sensor-data/delete-all-data-not-found/curl-request.adoc[]
+
+// (Include sections for Invalid/Missing Company API Key for DELETE /{sensorId} similar to GET /)

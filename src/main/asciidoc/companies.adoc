@@ -1,0 +1,176 @@
+[[admin-companies]]
+=== Compañías (Admin)
+
+Endpoints para la gestión completa de las compañías dentro del sistema. Estas operaciones están restringidas a usuarios con el rol `ADMIN`.
+
+// #################################################################
+[[admin-create-company]]
+==== Crear `(POST /)`
+
+Registra una nueva compañía en el sistema. La API Key es generada automáticamente por el servidor.
+
+*Descripción:*
+Una petición `POST` a la ruta base `/api/v1/admin/companies` con los datos requeridos en el cuerpo creará una nueva entidad de compañía.
+
+*Petición:*
+include::{snippets}/admin/create-company/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/admin/create-company/request-fields.adoc[]
+
+*Respuesta (Éxito - 201 Created):*
+Devuelve los detalles de la compañía recién creada, incluyendo su ID asignado y la API Key generada.
+include::{snippets}/admin/create-company/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/admin/create-company/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/create-company/curl-request.adoc[]
+
+// #################################################################
+
+[[admin-create-company-validation-error]]
+===== Error de Validación
+
+Si la petición para crear una compañía no cumple con las reglas de validación (ej: falta el nombre), el servidor responderá con un error `400 Bad Request`.
+
+*Petición (Inválida):*
+Este ejemplo muestra una petición donde `companyName` es nulo.
+include::{snippets}/admin/create-company-validation-error/http-request.adoc[]
+
+*Respuesta (Error - 400 Bad Request):*
+El cuerpo de la respuesta contendrá un mapa JSON donde las claves son los nombres de los campos que fallaron la validación y los valores son los mensajes de error correspondientes.
+include::{snippets}/admin/create-company-validation-error/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+Describe los campos presentes en la respuesta de error de validación.
+include::{snippets}/admin/create-company-validation-error/response-fields.adoc[]
+
+*Ejemplo cURL (Inválido):*
+include::{snippets}/admin/create-company-validation-error/curl-request.adoc[]
+
+
+// #################################################################
+[[admin-get-all-companies]]
+==== Obtener Todas `(GET /)`
+
+Recupera una lista completa de todas las compañías registradas en el sistema.
+
+*Descripción:*
+Una petición `GET` a la ruta base `/api/v1/admin/companies` devuelve un array JSON con todas las compañías.
+
+*Petición:*
+include::{snippets}/admin/get-all-companies/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un array JSON, donde cada objeto representa una compañía.
+include::{snippets}/admin/get-all-companies/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+Describe la estructura del array y los campos de cada objeto compañía dentro del array.
+include::{snippets}/admin/get-all-companies/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/get-all-companies/curl-request.adoc[]
+
+
+// #################################################################
+[[admin-get-company-by-id]]
+==== Obtener por ID `(GET /{id})`
+
+Recupera los detalles de una compañía específica utilizando su identificador único.
+
+*Descripción:*
+Una petición `GET` a `/api/v1/admin/companies/{id}` donde `{id}` es el ID numérico de la compañía.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/get-company-by-id/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/admin/get-company-by-id/http-request.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve un objeto JSON con los detalles de la compañía encontrada.
+include::{snippets}/admin/get-company-by-id/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/admin/get-company-by-id/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/get-company-by-id/curl-request.adoc[]
+
+// #################################################################
+[[admin-get-company-by-id-not-found]]
+==== Error - No Encontrado `(GET /{id})`
+
+Si se solicita una compañía con un ID que no existe en el sistema, el servidor responderá con un error `404 Not Found`.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/get-company-by-id-not-found/path-parameters.adoc[]
+
+*Petición (ID Inexistente):*
+include::{snippets}/admin/get-company-by-id-not-found/http-request.adoc[]
+
+*Respuesta (Error - 404 Not Found):*
+Devuelve un objeto JSON estándar de error indicando que el recurso no fue encontrado.
+include::{snippets}/admin/get-company-by-id-not-found/http-response.adoc[]
+
+*Campos de Respuesta (Error):*
+Describe la estructura de la respuesta de error `404`.
+include::{snippets}/admin/get-company-by-id-not-found/response-fields.adoc[]
+
+*Ejemplo cURL (ID Inexistente):*
+include::{snippets}/admin/get-company-by-id-not-found/curl-request.adoc[]
+
+
+// #################################################################
+[[admin-update-company]]
+==== Actualizar `(PUT /{id})`
+
+Modifica los datos de una compañía existente, identificada por su ID. Actualmente permite cambiar el nombre de la compañía.
+
+*Descripción:*
+Una petición `PUT` a `/api/v1/admin/companies/{id}` con los nuevos datos en el cuerpo.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/update-company/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/admin/update-company/http-request.adoc[]
+
+*Campos de Petición:*
+include::{snippets}/admin/update-company/request-fields.adoc[]
+
+*Respuesta (Éxito - 200 OK):*
+Devuelve el objeto JSON de la compañía con los datos actualizados.
+include::{snippets}/admin/update-company/http-response.adoc[]
+
+*Campos de Respuesta (Éxito):*
+include::{snippets}/admin/update-company/response-fields.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/update-company/curl-request.adoc[]
+
+
+// #################################################################
+[[admin-delete-company]]
+==== Eliminar `(DELETE /{id})`
+
+Elimina permanentemente una compañía del sistema utilizando su ID. Acción irreversible.
+
+*Descripción:*
+Una petición `DELETE` a `/api/v1/admin/companies/{id}`.
+
+*Parámetros de Ruta:*
+include::{snippets}/admin/delete-company/path-parameters.adoc[]
+
+*Petición:*
+include::{snippets}/admin/delete-company/http-request.adoc[]
+
+*Respuesta (Éxito - 204 No Content):*
+Si la eliminación es exitosa, el servidor responde con un código `204 No Content` y sin cuerpo en la respuesta.
+include::{snippets}/admin/delete-company/http-response.adoc[]
+
+*Ejemplo cURL:*
+include::{snippets}/admin/delete-company/curl-request.adoc[]

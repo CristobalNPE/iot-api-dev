@@ -19,14 +19,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static talento.futuro.iotapidev.constants.ApiKeys.COMPANY_API_KEY_HEADER;
 import static talento.futuro.iotapidev.constants.ApiKeys.COMPANY_API_KEY_PARAM;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CompanyApiKeyFilter extends OncePerRequestFilter {
-
-    private static final String COMPANY_API_KEY = "X-Company-Api-Key";
 
     private final CompanyRepository companyRepository;
 
@@ -35,12 +34,13 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
         String method = request.getMethod();
+        log.debug("shouldNotFilter Check: Path='{}', Method='{}'", path, method);
 
         if (path.startsWith(ApiBase.V1 + ApiPath.ADMIN)) {
             return true;
         }
 
-        if (path.equals(ApiBase.V1 + ApiPath.SENSOR_DATA) && method.equals("POST")) {
+        if (path.equals(ApiBase.V1 + ApiPath.SENSOR_DATA) &&  "POST".equalsIgnoreCase(method)) {
             return true;
         }
 
@@ -56,7 +56,7 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
         if (companyApiKey == null || companyApiKey.isBlank()) {
             log.info("Company API Key not found.");
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Company API Key not found.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Company API Key not found.");
             return;
         }
 
@@ -64,7 +64,7 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
 
         if (companyOpt.isEmpty()) {
             log.info("Company with API Key {} not found in the DB.", companyApiKey);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Company API Key not found.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Company API Key not found.");
             return;
         }
 
@@ -81,7 +81,7 @@ public class CompanyApiKeyFilter extends OncePerRequestFilter {
     }
 
     private static String getCompanyApiKey(HttpServletRequest request) {
-        String companyApiKey = request.getHeader(COMPANY_API_KEY);
+        String companyApiKey = request.getHeader(COMPANY_API_KEY_HEADER);
         if (companyApiKey == null) {
             companyApiKey = request.getParameter(COMPANY_API_KEY_PARAM);
         }
