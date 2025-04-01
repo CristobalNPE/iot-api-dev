@@ -11,7 +11,7 @@ Todas las peticiones a estos endpoints requieren una API Key válida de la compa
 
 // #################################################################
 [[location-get-all-paged]]
-==== Obtener Paginadas `(GET /)`
+==== Obtener Todas `(GET /)`
 
 Recupera una lista paginada de todas las ubicaciones asociadas a la compañía autenticada.
 
