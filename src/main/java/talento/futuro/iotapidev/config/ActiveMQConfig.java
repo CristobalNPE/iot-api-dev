@@ -20,7 +20,7 @@ public class ActiveMQConfig {
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory (ConnectionFactory connectionFactory) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
-        factory.setConcurrency("1");
+        factory.setConcurrency(concurrency);
         factory.setPubSubDomain(true);
         factory.setSessionTransacted(true);
 
