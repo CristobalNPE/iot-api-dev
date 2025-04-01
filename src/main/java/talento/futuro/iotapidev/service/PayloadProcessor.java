@@ -25,14 +25,17 @@ public class PayloadProcessor {
 
 
     public void extractSensorData(Payload payload) {
-
-        Sensor sensor = sensorRepository.findByApiKey(payload.api_key())
-                                        .orElseThrow(() -> new InvalidSensorApiKeyException(payload.api_key()));
-
         try {
+            String apiKey = payload.api_key();
+
+            Sensor sensor = sensorRepository.findByApiKey(apiKey)
+                    .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
+
             JsonNode dataArray = objectMapper.valueToTree(payload.json_data());
+
             extractMeasurements(dataArray, sensor);
-        } catch (Exception e) {
+
+        } catch (IllegalArgumentException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
         }
@@ -43,19 +46,18 @@ public class PayloadProcessor {
             JsonNode root = objectMapper.readTree(message);
 
             String apiKey = root.get("api_key").asText();
-            JsonNode dataArray = root.get("json_data");
 
             Sensor sensor = sensorRepository.findByApiKey(apiKey)
                                             .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
 
-            extractMeasurements(dataArray, sensor);
+            JsonNode dataArray = root.get("json_data");
 
+            extractMeasurements(dataArray, sensor);
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
         }
-
     }
 
     private void extractMeasurements(JsonNode dataArray, Sensor sensor) {
@@ -72,5 +74,4 @@ public class PayloadProcessor {
 
         }
     }
-
 }
