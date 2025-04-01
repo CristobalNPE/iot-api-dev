@@ -58,7 +58,7 @@ public class PayloadProcessor {
 
     }
 
-    private static void extractMeasurements(JsonNode dataArray, Sensor sensor) {
+    private void extractMeasurements(JsonNode dataArray, Sensor sensor) {
         for (JsonNode measurement : dataArray) {
 
             JsonNode datetime = measurement.get("datetime");
