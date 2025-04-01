@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import talento.futuro.iotapidev.dto.Payload;
 import talento.futuro.iotapidev.exception.InvalidJSONException;
 import talento.futuro.iotapidev.exception.InvalidSensorApiKeyException;
@@ -20,18 +23,18 @@ import talento.futuro.iotapidev.repository.SensorRepository;
 @RequiredArgsConstructor
 public class PayloadProcessor {
 
+    private final Validator validator;
     private final ObjectMapper objectMapper;
     private final SensorRepository sensorRepository;
 
-
     public void extractSensorData(Payload payload) {
         try {
-            String apiKey = payload.api_key();
+            String apiKey = payload.apiKey();
 
             Sensor sensor = sensorRepository.findByApiKey(apiKey)
                     .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
 
-            JsonNode dataArray = objectMapper.valueToTree(payload.json_data());
+            JsonNode dataArray = objectMapper.valueToTree(payload.jsonData());
 
             extractMeasurements(dataArray, sensor);
 
@@ -42,12 +45,35 @@ public class PayloadProcessor {
     }
 
     public void extractSensorData(String message) {
+        Payload parsedPayload;
+
         try {
-            Payload payload = objectMapper.readValue(message, Payload.class);
-            extractSensorData(payload);
+            parsedPayload = objectMapper.readValue(message, Payload.class);
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
+        }
+
+        try {
+            validatePayload(parsedPayload);
+        } catch (MethodArgumentNotValidException e) {
+            e.getBindingResult().getAllErrors().stream()
+                    .findFirst()
+                    .ifPresent(error ->
+                            log.error("Error processing JSON: {}", error.getDefaultMessage())
+                    );
+            throw new InvalidJSONException(e);
+        }
+
+        extractSensorData(parsedPayload);
+    }
+
+    private void validatePayload(Payload payload) throws MethodArgumentNotValidException {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(payload, "payload");
+        validator.validate(payload, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, bindingResult);
         }
     }
 
