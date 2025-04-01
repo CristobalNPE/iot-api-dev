@@ -15,6 +15,7 @@ import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
 import talento.futuro.iotapidev.exception.LocationNotFoundException;
 import talento.futuro.iotapidev.exception.SensorNotFoundException;
+import talento.futuro.iotapidev.service.AdminSensorService;
 import talento.futuro.iotapidev.service.SensorService;
 
 import java.util.List;
@@ -43,7 +44,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
     private static final String ADMIN_SENSOR_PATH = ApiBase.V1 + ApiPath.ADMIN + ApiPath.SENSOR;
 
     @MockitoBean
-    private SensorService sensorService;
+    private AdminSensorService sensorService;
 
     @Test
     void createSensorAdmin() throws Exception {
@@ -53,7 +54,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
         SensorRequest request = createDefaultSensorRequest(sensorLocationId, "Sensor 1");
         SensorResponse expectedResponse = createDefaultSensorResponse(1, sensorLocationId, "Sensor 1");
 
-        when(sensorService.adminCreateSensor(any(SensorRequest.class))).thenReturn(expectedResponse);
+        when(sensorService.createSensor(any(SensorRequest.class))).thenReturn(expectedResponse);
 
         mockMvc.perform(post(ADMIN_SENSOR_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +73,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
 
         int locationId = 999;
         SensorRequest request = createDefaultSensorRequest(locationId, "Sensor 1");
-        when(sensorService.adminCreateSensor(any(SensorRequest.class))).thenThrow(new LocationNotFoundException(locationId));
+        when(sensorService.createSensor(any(SensorRequest.class))).thenThrow(new LocationNotFoundException(locationId));
 
         mockMvc.perform(post(ADMIN_SENSOR_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +93,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
 
         Page<SensorResponse> expectedPage = new PageImpl<>(sensorsList, requestedPageable, sensorsList.size());
 
-        when(sensorService.adminFindAllSensors(any(Pageable.class))).thenReturn(expectedPage);
+        when(sensorService.findAllSensors(any(Pageable.class))).thenReturn(expectedPage);
 
         mockMvc.perform(get(ADMIN_SENSOR_PATH)
                        .accept(MediaType.APPLICATION_JSON))
@@ -115,7 +116,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
     void getSensorById_Found() throws Exception {
         int sensorId = 1;
         SensorResponse expectedResponse = createDefaultSensorResponse(sensorId, 10, "Sensor Uno");
-        when(sensorService.adminFindSensorById(sensorId)).thenReturn(expectedResponse);
+        when(sensorService.findSensorById(sensorId)).thenReturn(expectedResponse);
 
         mockMvc.perform(get(ADMIN_SENSOR_PATH + "/{id}", sensorId)
                        .accept(MediaType.APPLICATION_JSON))
@@ -137,7 +138,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
     @Test
     void getSensorById_NotFound() throws Exception {
         int sensorId = 9999;
-        when(sensorService.adminFindSensorById(sensorId)).thenThrow(new SensorNotFoundException(sensorId));
+        when(sensorService.findSensorById(sensorId)).thenThrow(new SensorNotFoundException(sensorId));
 
         mockMvc.perform(get(ADMIN_SENSOR_PATH + "/{id}", sensorId)
                        .accept(MediaType.APPLICATION_JSON))
@@ -157,7 +158,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
         SensorRequest request = createDefaultSensorRequest(sensorId, sensorName);
         SensorResponse expectedResponse = createDefaultSensorResponse(sensorId, 10, sensorName);
 
-        when(sensorService.adminUpdateSensor(sensorId, request)).thenReturn(expectedResponse);
+        when(sensorService.updateSensor(sensorId, request)).thenReturn(expectedResponse);
 
         mockMvc.perform(put(ADMIN_SENSOR_PATH + "/{id}", sensorId)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -177,7 +178,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
     @Test
     void deleteSensor() throws Exception {
         int sensorId = 1;
-        doNothing().when(sensorService).adminDeleteSensor(eq(sensorId));
+        doNothing().when(sensorService).deleteSensor(eq(sensorId));
 
         mockMvc.perform(delete(ADMIN_SENSOR_PATH + "/{id}", sensorId))
                .andExpect(status().isNoContent())
