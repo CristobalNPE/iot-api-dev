@@ -20,29 +20,29 @@ public class AdminLocationController {
 
     @GetMapping
     public Page<LocationResponse> getAllLocations(Pageable pageable) {
-        return adminLocationService.adminFindAllLocations(pageable); 
+        return adminLocationService.findAllLocations(pageable); 
     }
 
     @GetMapping("/{locationId}")
     public LocationResponse getLocationById(@PathVariable(name = "locationId") Integer locationId) {
-        return adminLocationService.adminFindLocationById(locationId);
+        return adminLocationService.findLocationById(locationId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public LocationResponse createLocation(@RequestBody @Valid LocationAdminRequest request) {
-        return adminLocationService.adminCreateLocation(request);
+        return adminLocationService.createLocation(request);
     }
 
     @PutMapping("/{locationId}")
     public LocationResponse updateLocation(@RequestBody @Valid LocationAdminRequest request,
                                            @PathVariable(name = "locationId") Integer locationId) {
-        return adminLocationService.adminUpdateLocation(locationId, request);
+        return adminLocationService.updateLocation(locationId, request);
     }
 
     @DeleteMapping("/{locationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLocation(@PathVariable(name = "locationId") Integer locationId) {
-        adminLocationService.adminDeleteLocation(locationId);
+        adminLocationService.deleteLocation(locationId);
     }
 }

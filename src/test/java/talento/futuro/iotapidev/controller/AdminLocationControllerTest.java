@@ -52,7 +52,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
         LocationAdminRequest request = createDefaultLocationAdminRequest(4, "Ubicación de Prueba");
         LocationResponse expectedResponse = createDefaultLocationResponse(1, "Ubicación de Prueba");
 
-        when(adminLocationService.adminCreateLocation(any(LocationAdminRequest.class))).thenReturn(expectedResponse);
+        when(adminLocationService.createLocation(any(LocationAdminRequest.class))).thenReturn(expectedResponse);
 
         mockMvc.perform(post(ADMIN_LOCATION_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
     void createLocationAdmin_NotFoundCompanyId() throws Exception {
 
         LocationAdminRequest request = createDefaultLocationAdminRequest(999, "Ubicación de Prueba");
-        when(adminLocationService.adminCreateLocation(any(LocationAdminRequest.class))).thenThrow(new CompanyNotFoundException(999));
+        when(adminLocationService.createLocation(any(LocationAdminRequest.class))).thenThrow(new CompanyNotFoundException(999));
 
         mockMvc.perform(post(ADMIN_LOCATION_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +103,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
         List<LocationResponse> locationsList = createDefaultLocationResponseList();
         Page<LocationResponse> expectedPage = new PageImpl<>(locationsList, requestedPageable, locationsList.size());
 
-        when(adminLocationService.adminFindAllLocations(any(Pageable.class))).thenReturn(expectedPage);
+        when(adminLocationService.findAllLocations(any(Pageable.class))).thenReturn(expectedPage);
 
         mockMvc.perform(get(ADMIN_LOCATION_PATH)
                        .accept(MediaType.APPLICATION_JSON))
@@ -128,7 +128,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
         int locationId = 1;
         LocationResponse expectedResponse = createDefaultLocationResponse(locationId, "Ubicación de Prueba");
 
-        when(adminLocationService.adminFindLocationById(locationId)).thenReturn(expectedResponse);
+        when(adminLocationService.findLocationById(locationId)).thenReturn(expectedResponse);
 
         mockMvc.perform(get(ADMIN_LOCATION_PATH + "/{id}", locationId)
                        .accept(MediaType.APPLICATION_JSON))
@@ -150,7 +150,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
     void getLocationById_NotFound() throws Exception {
 
         int locationId = 9999;
-        when(adminLocationService.adminFindLocationById(locationId)).thenThrow(new LocationNotFoundException(locationId));
+        when(adminLocationService.findLocationById(locationId)).thenThrow(new LocationNotFoundException(locationId));
 
         mockMvc.perform(get(ADMIN_LOCATION_PATH + "/{id}", locationId)
                        .accept(MediaType.APPLICATION_JSON))
@@ -171,7 +171,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
         LocationAdminRequest request = createDefaultLocationAdminRequest(1, locationName);
         LocationResponse expectedResponse = createDefaultLocationResponse(locationId, locationName);
 
-        when(adminLocationService.adminUpdateLocation(locationId, request)).thenReturn(expectedResponse);
+        when(adminLocationService.updateLocation(locationId, request)).thenReturn(expectedResponse);
 
         mockMvc.perform(put(ADMIN_LOCATION_PATH + "/{id}", locationId)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
     void deleteLocation() throws Exception {
 
         int locationId = 1;
-        doNothing().when(adminLocationService).adminDeleteLocation(eq(locationId));
+        doNothing().when(adminLocationService).deleteLocation(eq(locationId));
 
         mockMvc.perform(delete(ADMIN_LOCATION_PATH + "/{id}", locationId))
                .andExpect(status().isNoContent())

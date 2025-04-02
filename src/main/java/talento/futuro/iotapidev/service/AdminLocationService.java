@@ -25,15 +25,14 @@ public class AdminLocationService {
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
     private final CompanyRepository companyRepository;
-    private final AuthService authService;
 
-     public Page<LocationResponse> adminFindAllLocations(Pageable pageable) {
+     public Page<LocationResponse> findAllLocations(Pageable pageable) {
         Page<Location> locations = locationRepository.findAll(pageable);
 
         return locations.map(locationMapper::toLocationResponse);
     }
 
-    public LocationResponse adminCreateLocation(@Valid LocationAdminRequest request) {
+    public LocationResponse createLocation(@Valid LocationAdminRequest request) {
         if (request.companyId() == null) {
             throw new CompanyNotFoundException(null);
         }
@@ -54,13 +53,13 @@ public class AdminLocationService {
         return locationMapper.toLocationResponse(saved);
     }
 
-    public LocationResponse adminFindLocationById(Integer locationId) {
+    public LocationResponse findLocationById(Integer locationId) {
         return locationRepository.findById(locationId)
                                  .map(locationMapper::toLocationResponse)
                                  .orElseThrow(() -> new LocationNotFoundException(locationId));
     }
 
-    public LocationResponse adminUpdateLocation(Integer locationId, @Valid LocationAdminRequest request) {
+    public LocationResponse updateLocation(Integer locationId, @Valid LocationAdminRequest request) {
         if (request.companyId() == null) {
             throw new CompanyNotFoundException(null);
         }
@@ -79,7 +78,7 @@ public class AdminLocationService {
         return locationMapper.toLocationResponse(locationRepository.save(location));
     }
 
-    public void adminDeleteLocation(Integer locationId) {
+    public void deleteLocation(Integer locationId) {
         if (!locationRepository.existsById(locationId)) {
             throw new LocationNotFoundException(locationId);
         }
