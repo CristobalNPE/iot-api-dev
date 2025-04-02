@@ -10,41 +10,39 @@ import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
-import talento.futuro.iotapidev.service.LocationService;
-
-import java.util.List;
+import talento.futuro.iotapidev.service.AdminLocationService;
 
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.ADMIN + ApiPath.LOCATION)
 @RequiredArgsConstructor
 public class AdminLocationController {
-    private final LocationService locationService;
+    private final AdminLocationService adminLocationService;
 
     @GetMapping
     public Page<LocationResponse> getAllLocations(Pageable pageable) {
-        return locationService.adminFindAllLocations(pageable); 
+        return adminLocationService.adminFindAllLocations(pageable); 
     }
 
     @GetMapping("/{locationId}")
     public LocationResponse getLocationById(@PathVariable(name = "locationId") Integer locationId) {
-        return locationService.adminFindLocationById(locationId);
+        return adminLocationService.adminFindLocationById(locationId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public LocationResponse createLocation(@RequestBody @Valid LocationAdminRequest request) {
-        return locationService.adminCreateLocation(request);
+        return adminLocationService.adminCreateLocation(request);
     }
 
     @PutMapping("/{locationId}")
     public LocationResponse updateLocation(@RequestBody @Valid LocationAdminRequest request,
                                            @PathVariable(name = "locationId") Integer locationId) {
-        return locationService.adminUpdateLocation(locationId, request);
+        return adminLocationService.adminUpdateLocation(locationId, request);
     }
 
     @DeleteMapping("/{locationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLocation(@PathVariable(name = "locationId") Integer locationId) {
-        locationService.adminDeleteLocation(locationId);
+        adminLocationService.adminDeleteLocation(locationId);
     }
 }
