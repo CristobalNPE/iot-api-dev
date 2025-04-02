@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import talento.futuro.iotapidev.dto.Payload;
 import talento.futuro.iotapidev.exception.InvalidJSONException;
 import talento.futuro.iotapidev.exception.InvalidSensorApiKeyException;
@@ -20,45 +23,61 @@ import talento.futuro.iotapidev.repository.SensorRepository;
 @RequiredArgsConstructor
 public class PayloadProcessor {
 
+    private final Validator validator;
     private final ObjectMapper objectMapper;
     private final SensorRepository sensorRepository;
 
-
     public void extractSensorData(Payload payload) {
-
-        Sensor sensor = sensorRepository.findByApiKey(payload.api_key())
-                                        .orElseThrow(() -> new InvalidSensorApiKeyException(payload.api_key()));
-
         try {
-            JsonNode dataArray = objectMapper.valueToTree(payload.json_data());
+            String apiKey = payload.apiKey();
+
+            Sensor sensor = sensorRepository.findByApiKey(apiKey)
+                    .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
+
+            JsonNode dataArray = objectMapper.valueToTree(payload.jsonData());
+
             extractMeasurements(dataArray, sensor);
-        } catch (Exception e) {
+
+        } catch (IllegalArgumentException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
         }
     }
 
     public void extractSensorData(String message) {
+        Payload parsedPayload;
+
         try {
-            JsonNode root = objectMapper.readTree(message);
-
-            String apiKey = root.get("api_key").asText();
-            JsonNode dataArray = root.get("json_data");
-
-            Sensor sensor = sensorRepository.findByApiKey(apiKey)
-                                            .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
-
-            extractMeasurements(dataArray, sensor);
-
-
+            parsedPayload = objectMapper.readValue(message, Payload.class);
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
         }
 
+        try {
+            validatePayload(parsedPayload);
+        } catch (MethodArgumentNotValidException e) {
+            e.getBindingResult().getAllErrors().stream()
+                    .findFirst()
+                    .ifPresent(error ->
+                            log.error("Error processing JSON: {}", error.getDefaultMessage())
+                    );
+            throw new InvalidJSONException(e);
+        }
+
+        extractSensorData(parsedPayload);
     }
 
-    private static void extractMeasurements(JsonNode dataArray, Sensor sensor) {
+    private void validatePayload(Payload payload) throws MethodArgumentNotValidException {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(payload, "payload");
+        validator.validate(payload, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, bindingResult);
+        }
+    }
+
+    private void extractMeasurements(JsonNode dataArray, Sensor sensor) {
         for (JsonNode measurement : dataArray) {
 
             JsonNode datetime = measurement.get("datetime");
@@ -72,5 +91,4 @@ public class PayloadProcessor {
 
         }
     }
-
 }
