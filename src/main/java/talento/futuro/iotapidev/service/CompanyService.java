@@ -8,6 +8,7 @@ import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
 import talento.futuro.iotapidev.exception.CompanyNotFoundException;
 import talento.futuro.iotapidev.exception.DuplicatedCompanyException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.CompanyMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
@@ -46,19 +47,19 @@ public class CompanyService {
     public CompanyResponse getById(Integer id) {
         return companyRepository.findById(id)
                                 .map(companyMapper::toResponse)
-                                .orElseThrow(() -> new CompanyNotFoundException(id));
+                                .orElseThrow(() -> new NotFoundException("Company with ID %d not found".formatted(id)));
     }
 
     public void deleteById(Integer id) {
         if (!companyRepository.existsById(id)) {
-            throw new CompanyNotFoundException(id);
+            throw new NotFoundException("Company with ID %d not found".formatted(id));
         }
         companyRepository.deleteById(id);
     }
 
     public CompanyResponse updateCompany(Integer id, @Valid CompanyRequest request) {
         Company company = companyRepository.findById(id)
-                                           .orElseThrow(() -> new CompanyNotFoundException(id));
+                                           .orElseThrow(() -> new NotFoundException("Company with ID %d not found".formatted(id)));
 
         company.setName(request.companyName());
         company = companyRepository.save(company);

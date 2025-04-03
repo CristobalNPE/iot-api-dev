@@ -12,6 +12,7 @@ import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.exception.CompanyNotFoundException;
 import talento.futuro.iotapidev.exception.DuplicatedLocationException;
 import talento.futuro.iotapidev.exception.LocationNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.LocationMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.model.Location;
@@ -45,7 +46,7 @@ public class LocationService {
         Integer companyId = authService.getCompanyIdFromContext();
 
         Company company = companyRepository.findById(companyId).orElseThrow(
-                () -> new CompanyNotFoundException(companyId));
+                () -> new NotFoundException("Company with ID %d not found".formatted(companyId)));
 
         Location newLocation = Location.builder()
                                        .name(request.name())
@@ -87,7 +88,7 @@ public class LocationService {
         Integer companyId = authService.getCompanyIdFromContext();
 
         return locationRepository.findByIdAndCompanyId(locationId, companyId)
-                                 .orElseThrow(() -> new LocationNotFoundException(locationId));
+                                 .orElseThrow(() -> new NotFoundException("Location with ID %d not found.".formatted(locationId)));
     }
 
     private void validateRequest(@Valid LocationRequest request) {

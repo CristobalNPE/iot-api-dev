@@ -22,20 +22,8 @@ public class GlobalExceptionHandler {
         private final LocalDateTime timestamp;
     }
 
-    @ExceptionHandler(CompanyNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCompanyNotFoundException(CompanyNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(LocationNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleLocationNotFoundException(LocationNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(SensorNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleSensorNotFoundException(SensorNotFoundException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ErrorResponse(ex.getMessage(), LocalDateTime.now()));
     }

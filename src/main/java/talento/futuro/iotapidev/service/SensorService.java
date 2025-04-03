@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
 import talento.futuro.iotapidev.exception.DuplicatedSensorException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.exception.SensorNotFoundException;
 import talento.futuro.iotapidev.mapper.SensorMapper;
 import talento.futuro.iotapidev.model.Location;
@@ -99,7 +100,7 @@ public class SensorService {
         Integer companyId = authService.getCompanyIdFromContext();
 
         return sensorRepository.findSensorByIdForCompany(id, companyId)
-                .orElseThrow(() -> new SensorNotFoundException(id));
+                .orElseThrow(() -> new NotFoundException("Sensor with id %d not found".formatted(id)));
     }
 
 }
