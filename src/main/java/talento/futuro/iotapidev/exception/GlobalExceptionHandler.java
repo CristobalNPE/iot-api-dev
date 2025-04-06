@@ -39,6 +39,19 @@ public class GlobalExceptionHandler {
                 new ErrorResponse(ex.getMessage(),HttpStatus.CONFLICT.value(), LocalDateTime.now()));
     }
     
+    @ExceptionHandler(InvalidSensorApiKeyException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidSensorApiKeyException(InvalidSensorApiKeyException ex) {
+    	 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                 new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now()));
+    }
+    
+    @ExceptionHandler(InvalidJSONException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJSONException(InvalidJSONException ex) {
+    	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                 new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()));
+    }
+    
+    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
