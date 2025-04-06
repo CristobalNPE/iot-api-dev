@@ -15,7 +15,7 @@ import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.Payload;
 import talento.futuro.iotapidev.dto.SensorDataResponse;
 import talento.futuro.iotapidev.exception.InvalidSensorApiKeyException;
-import talento.futuro.iotapidev.exception.SensorNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.service.SensorDataService;
 import talento.futuro.iotapidev.utils.WithMockCompany;
 
@@ -209,7 +209,7 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
         int sensorIdToDelete = 99;
 
 
-        doThrow(new SensorNotFoundException(sensorIdToDelete))
+        doThrow(new NotFoundException("Sensor",sensorIdToDelete))
                 .when(sensorDataService).deleteAllSensorData(eq(sensorIdToDelete));
 
         mockMvc.perform(delete(SENSOR_DATA_PATH + "/{sensorId}", sensorIdToDelete)

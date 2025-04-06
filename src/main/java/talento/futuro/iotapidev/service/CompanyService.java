@@ -6,8 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
-import talento.futuro.iotapidev.exception.CompanyNotFoundException;
-import talento.futuro.iotapidev.exception.DuplicatedCompanyException;
+import talento.futuro.iotapidev.exception.DuplicatedException;
 import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.CompanyMapper;
 import talento.futuro.iotapidev.model.Company;
@@ -47,19 +46,19 @@ public class CompanyService {
     public CompanyResponse getById(Integer id) {
         return companyRepository.findById(id)
                                 .map(companyMapper::toResponse)
-                                .orElseThrow(() -> new NotFoundException("Company with ID %d not found".formatted(id)));
+                                .orElseThrow(() -> new NotFoundException("Company",id));
     }
 
     public void deleteById(Integer id) {
         if (!companyRepository.existsById(id)) {
-            throw new NotFoundException("Company with ID %d not found".formatted(id));
+            throw new NotFoundException("Company",id);
         }
         companyRepository.deleteById(id);
     }
 
     public CompanyResponse updateCompany(Integer id, @Valid CompanyRequest request) {
         Company company = companyRepository.findById(id)
-                                           .orElseThrow(() -> new NotFoundException("Company with ID %d not found".formatted(id)));
+                                           .orElseThrow(() -> new NotFoundException("Company", id));
 
         company.setName(request.companyName());
         company = companyRepository.save(company);
@@ -69,7 +68,7 @@ public class CompanyService {
     
     private void validateRequest(@Valid CompanyRequest request) {
         if (companyRepository.existsByName(request.companyName())) {
-            throw new DuplicatedCompanyException(request.companyName());
+            throw new DuplicatedException("Company", request.companyName());
         }
     }
 

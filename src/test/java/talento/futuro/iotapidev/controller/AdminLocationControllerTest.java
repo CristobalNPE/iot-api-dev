@@ -13,8 +13,7 @@ import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
-import talento.futuro.iotapidev.exception.CompanyNotFoundException;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.service.AdminLocationService;
 
 import java.util.List;
@@ -82,9 +81,8 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
 
     @Test
     void createLocationAdmin_NotFoundCompanyId() throws Exception {
-
         LocationAdminRequest request = createDefaultLocationAdminRequest(999, "Ubicación de Prueba");
-        when(adminLocationService.createLocation(any(LocationAdminRequest.class))).thenThrow(new CompanyNotFoundException(999));
+        when(adminLocationService.createLocation(any(LocationAdminRequest.class))).thenThrow(new NotFoundException("Company",999));
 
         mockMvc.perform(post(ADMIN_LOCATION_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -150,7 +148,7 @@ class AdminLocationControllerTest extends BaseRestDocsControllerTest {
     void getLocationById_NotFound() throws Exception {
 
         int locationId = 9999;
-        when(adminLocationService.findLocationById(locationId)).thenThrow(new LocationNotFoundException(locationId));
+        when(adminLocationService.findLocationById(locationId)).thenThrow(new NotFoundException("Location",locationId));
 
         mockMvc.perform(get(ADMIN_LOCATION_PATH + "/{id}", locationId)
                        .accept(MediaType.APPLICATION_JSON))

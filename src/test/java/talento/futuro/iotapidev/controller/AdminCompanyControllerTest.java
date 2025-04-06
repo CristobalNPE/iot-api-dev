@@ -10,7 +10,7 @@ import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
-import talento.futuro.iotapidev.exception.CompanyNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.service.CompanyService;
 
 import java.util.List;
@@ -108,7 +108,7 @@ class AdminCompanyControllerTest extends BaseRestDocsControllerTest {
     void getCompanyById_NotFound() throws Exception {
 
         int companyId = 9999;
-        when(companyService.getById(eq(companyId))).thenThrow(new CompanyNotFoundException(companyId));
+        when(companyService.getById(eq(companyId))).thenThrow(new NotFoundException("Company", companyId));
 
         mockMvc.perform(get(ADMIN_COMPANY_PATH + "/{id}", companyId)
                        .accept(MediaType.APPLICATION_JSON))

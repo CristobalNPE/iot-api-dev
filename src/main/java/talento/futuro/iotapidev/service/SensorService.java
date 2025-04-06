@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
-import talento.futuro.iotapidev.exception.DuplicatedSensorException;
+import talento.futuro.iotapidev.exception.DuplicatedException;
 import talento.futuro.iotapidev.exception.NotFoundException;
-import talento.futuro.iotapidev.exception.SensorNotFoundException;
 import talento.futuro.iotapidev.mapper.SensorMapper;
 import talento.futuro.iotapidev.model.Location;
 import talento.futuro.iotapidev.model.Sensor;
@@ -69,7 +68,7 @@ public class SensorService {
         Location location = locationService.getLocationForCompany(request.locationId());
 
         if (sensorRepository.existsByNameAndId(request.sensorName(), id)) {
-            throw new DuplicatedSensorException(request.sensorName());
+            throw new DuplicatedException("Sensor",request.sensorName());
         }
 
         Sensor sensorForCompany = getSensorForCompany(id);
@@ -91,7 +90,7 @@ public class SensorService {
 
     private void validateRequest(@Valid SensorRequest request) {
         if (sensorRepository.existsByName(request.sensorName())) {
-            throw new DuplicatedSensorException(request.sensorName());
+            throw new DuplicatedException("Sensor", request.sensorName());
         }
     }
 
@@ -100,7 +99,7 @@ public class SensorService {
         Integer companyId = authService.getCompanyIdFromContext();
 
         return sensorRepository.findSensorByIdForCompany(id, companyId)
-                .orElseThrow(() -> new NotFoundException("Sensor with id %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Sensor",id));
     }
 
 }

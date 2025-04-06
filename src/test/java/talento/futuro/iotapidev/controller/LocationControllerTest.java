@@ -12,7 +12,7 @@ import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.service.LocationService;
 import talento.futuro.iotapidev.utils.WithMockCompany;
 
@@ -131,8 +131,7 @@ class LocationControllerTest extends BaseRestDocsControllerTest {
     void getLocationById_NotFoundForCompany() throws Exception {//default
         int locationId = 20; //location id that does not belong to company 1 (or does not exist)
 
-
-        when(locationService.findLocationByIdForCompany(eq(locationId))).thenThrow(new LocationNotFoundException(locationId));
+        when(locationService.findLocationByIdForCompany(eq(locationId))).thenThrow(new NotFoundException("Location",locationId));
 
         mockMvc.perform(get(LOCATION_PATH + "/{locationId}", locationId)
                        .accept(MediaType.APPLICATION_JSON)
@@ -278,7 +277,7 @@ class LocationControllerTest extends BaseRestDocsControllerTest {
         LocationRequest request = createDefaultLocationRequest("Intento Update");
 
         when(locationService.updateLocationForCompany(eq(locationId), any(LocationRequest.class)))
-                .thenThrow(new LocationNotFoundException(locationId));
+                .thenThrow(new NotFoundException("Location",locationId));
 
         mockMvc.perform(put(LOCATION_PATH + "/{locationId}", locationId)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -347,7 +346,7 @@ class LocationControllerTest extends BaseRestDocsControllerTest {
     void deleteLocation_NotFoundForCompany() throws Exception {
         int locationId = 20;
 
-        doThrow(new LocationNotFoundException(locationId)).when(locationService).deleteLocationForCompany(eq(locationId));
+        doThrow(new NotFoundException("Location",locationId)).when(locationService).deleteLocationForCompany(eq(locationId));
 
         mockMvc.perform(delete(LOCATION_PATH + "/{locationId}", locationId)
                        .header(COMPANY_API_KEY_HEADER, VALID_COMPANY_API_KEY))

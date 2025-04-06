@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
-import talento.futuro.iotapidev.exception.DuplicatedSensorException;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
-import talento.futuro.iotapidev.exception.SensorNotFoundException;
+import talento.futuro.iotapidev.exception.DuplicatedException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.SensorMapper;
 import talento.futuro.iotapidev.model.Location;
 import talento.futuro.iotapidev.model.Sensor;
@@ -31,7 +30,7 @@ public class AdminSensorService {
 
     private void validateRequest(@Valid SensorRequest request) {
         if (sensorRepository.existsByName(request.sensorName())) {
-            throw new DuplicatedSensorException(request.sensorName());
+            throw new DuplicatedException("Sensor", request.sensorName());
         }
     }
 
@@ -44,12 +43,12 @@ public class AdminSensorService {
     public SensorResponse findSensorById(Integer sensorId) {
         return sensorRepository.findById(sensorId)
                 .map(sensorMapper::toSensorResponse)
-                .orElseThrow(() -> new SensorNotFoundException(sensorId));
+                .orElseThrow(() -> new NotFoundException("Sensor", sensorId));
     }
 
     public SensorResponse createSensor(@Valid SensorRequest request) {
         Location location = locationRepository.findById(request.locationId())
-                .orElseThrow(() -> new LocationNotFoundException(request.locationId()));
+                .orElseThrow(() -> new NotFoundException("Location", request.locationId()));
 
         validateRequest(request);
 
@@ -68,10 +67,10 @@ public class AdminSensorService {
     public SensorResponse updateSensor(Integer sensorId, @Valid SensorRequest request) {
 
         Location location = locationRepository.findById(request.locationId())
-                .orElseThrow(() -> new LocationNotFoundException(request.locationId()));
+                .orElseThrow(() -> new NotFoundException("Location",request.locationId()));
 
         Sensor sensor = sensorRepository.findById(sensorId)
-                .orElseThrow(() -> new SensorNotFoundException(sensorId));
+                .orElseThrow(() -> new NotFoundException("Sensor",sensorId));
 
         sensor.setLocation(location);
         sensor.setName(request.sensorName());
@@ -83,7 +82,7 @@ public class AdminSensorService {
 
     public void deleteSensor(Integer sensorId) {
         if (!sensorRepository.existsById(sensorId)) {
-            throw new SensorNotFoundException(sensorId);
+            throw new NotFoundException("Sensor", sensorId);
         }
         sensorRepository.deleteById(sensorId);
     }
