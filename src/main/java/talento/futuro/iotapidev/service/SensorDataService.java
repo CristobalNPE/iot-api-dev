@@ -43,6 +43,7 @@ public class SensorDataService {
 
     public void deleteAllSensorData(Integer sensorId) {
         Integer companyId = authService.getCompanyIdFromContext();
+        //exist by -> throw
         sensorDataRepository.deleteAllSensorDataForCompanySensor(companyId, sensorId);
     }
 }
