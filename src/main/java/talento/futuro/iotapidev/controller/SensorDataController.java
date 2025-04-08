@@ -15,8 +15,6 @@ import talento.futuro.iotapidev.service.SensorDataService;
 
 import java.util.List;
 
-import static talento.futuro.iotapidev.constants.ApiKeys.COMPANY_API_KEY_PARAM;
-
 @Slf4j
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.SENSOR_DATA)
@@ -37,14 +35,12 @@ public class SensorDataController {
     public Page<SensorDataResponse> searchData(@RequestParam(required = false, value = "from") Long from,
                                                @RequestParam(required = false, value = "to") Long to,
                                                @RequestParam(required = false, value = "sensor_id") List<Integer> sensorIds,
-                                               @RequestParam(required = false, value = COMPANY_API_KEY_PARAM) String companyApiKey,
                                                Pageable pageable
     ) {
 
         log.info("From: {} ", from);
         log.info("To: {} ", to);
         log.info("SensorIds: {} ", sensorIds);
-        log.info("CompanyApiKey: {} ", companyApiKey);
 
         return sensorDataService.searchData(from, to, sensorIds, pageable);
 
