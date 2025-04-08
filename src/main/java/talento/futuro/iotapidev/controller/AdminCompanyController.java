@@ -2,6 +2,8 @@ package talento.futuro.iotapidev.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import talento.futuro.iotapidev.constants.ApiBase;
@@ -27,8 +29,8 @@ public class AdminCompanyController {
     }
 
     @GetMapping
-    public List<CompanyResponse> getAllCompanies() {
-        return companyService.getAll();
+    public Page<CompanyResponse> getAllCompanies(Pageable pageable) {
+        return companyService.getAll(pageable);
     }
 
     @GetMapping("/{id}")

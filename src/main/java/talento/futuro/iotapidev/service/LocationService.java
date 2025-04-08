@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
 import talento.futuro.iotapidev.exception.DuplicatedException;
@@ -16,8 +15,6 @@ import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.model.Location;
 import talento.futuro.iotapidev.repository.CompanyRepository;
 import talento.futuro.iotapidev.repository.LocationRepository;
-
-import java.util.List;
 
 @Service
 @Transactional

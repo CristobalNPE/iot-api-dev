@@ -12,8 +12,6 @@ import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
 import talento.futuro.iotapidev.service.SensorService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.SENSOR)
 @RequiredArgsConstructor

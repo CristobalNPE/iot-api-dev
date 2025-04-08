@@ -2,6 +2,8 @@ package talento.futuro.iotapidev.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.CompanyRequest;
@@ -37,10 +39,10 @@ public class CompanyService {
 
     }
 
-    public List<CompanyResponse> getAll() {
-        return companyRepository.findAll().stream()
-                                .map(companyMapper::toResponse)
-                                .toList();
+    public Page<CompanyResponse> getAll(Pageable pageable) {
+        return companyRepository.findAll(pageable)
+                                .map(companyMapper::toResponse);
+
     }
 
     public CompanyResponse getById(Integer id) {

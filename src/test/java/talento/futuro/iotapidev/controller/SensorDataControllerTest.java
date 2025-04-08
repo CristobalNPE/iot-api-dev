@@ -54,7 +54,6 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
     @MockitoBean
     private SensorDataService sensorDataService;
 
-
     @Test
     void registerPayload_Success() throws Exception {
         String validSensorApiKey = generateApiKeyForTests();
