@@ -12,9 +12,8 @@ import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
-import talento.futuro.iotapidev.exception.DuplicatedSensorException;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
-import talento.futuro.iotapidev.exception.SensorNotFoundException;
+import talento.futuro.iotapidev.exception.DuplicatedException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.service.SensorService;
 import talento.futuro.iotapidev.utils.WithMockCompany;
 
@@ -124,7 +123,7 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
     void getSensorById_NotFoundForCompany() throws Exception {
         int sensorId = 99;
 
-        when(sensorService.getSensorById(eq(sensorId))).thenThrow(new SensorNotFoundException(sensorId));
+        when(sensorService.getSensorById(eq(sensorId))).thenThrow(new NotFoundException("Sensor",sensorId));
 
         mockMvc.perform(get(SENSOR_PATH + "/{id}", sensorId)
                        .accept(MediaType.APPLICATION_JSON)
@@ -190,7 +189,7 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
 
 
         SensorRequest request = createDefaultSensorRequest(locationId, "Sensor Existente");
-        when(sensorService.createSensor(any(SensorRequest.class))).thenThrow(new DuplicatedSensorException(request.sensorName()));
+        when(sensorService.createSensor(any(SensorRequest.class))).thenThrow(new DuplicatedException("Sensor",request.sensorName()));
 
         mockMvc.perform(post(SENSOR_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -212,7 +211,7 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
 
         SensorRequest request = createDefaultSensorRequest(invalidLocationId, "Sensor For Invalid Loc");
 
-        when(sensorService.createSensor(any(SensorRequest.class))).thenThrow(new LocationNotFoundException(invalidLocationId));
+        when(sensorService.createSensor(any(SensorRequest.class))).thenThrow(new NotFoundException("Location",invalidLocationId));
 
         mockMvc.perform(post(SENSOR_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -263,7 +262,7 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
 
 
         SensorRequest request = createDefaultSensorRequest(locationId, "Sensor Prueba (intento de modif.)");
-        when(sensorService.updateSensor(eq(sensorId), any(SensorRequest.class))).thenThrow(new SensorNotFoundException(sensorId));
+        when(sensorService.updateSensor(eq(sensorId), any(SensorRequest.class))).thenThrow(new NotFoundException("Sensor", sensorId));
 
         mockMvc.perform(put(SENSOR_PATH + "/{id}", sensorId)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -286,7 +285,7 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
 
         SensorRequest request = createDefaultSensorRequest(invalidNewLocationId, "Update To Invalid Loc");
 
-        when(sensorService.updateSensor(eq(sensorId), any(SensorRequest.class))).thenThrow(new LocationNotFoundException(invalidNewLocationId));
+        when(sensorService.updateSensor(eq(sensorId), any(SensorRequest.class))).thenThrow(new NotFoundException("Location", invalidNewLocationId));
 
         mockMvc.perform(put(SENSOR_PATH + "/{id}", sensorId)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -321,7 +320,7 @@ class SensorControllerTest extends BaseRestDocsControllerTest {
     void deleteSensor_NotFoundForCompany() throws Exception {
         int sensorId = 99;
 
-        doThrow(new SensorNotFoundException(sensorId)).when(sensorService).deleteSensor(eq(sensorId));
+        doThrow(new NotFoundException("Sensor", sensorId)).when(sensorService).deleteSensor(eq(sensorId));
 
         mockMvc.perform(delete(SENSOR_PATH + "/{id}", sensorId)
                        .header(COMPANY_API_KEY_HEADER, VALID_COMPANY_API_KEY))

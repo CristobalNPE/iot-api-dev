@@ -9,9 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
-import talento.futuro.iotapidev.exception.CompanyNotFoundException;
-import talento.futuro.iotapidev.exception.DuplicatedLocationException;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
+import talento.futuro.iotapidev.exception.DuplicatedException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.LocationMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.model.Location;
@@ -45,7 +44,7 @@ public class LocationService {
         Integer companyId = authService.getCompanyIdFromContext();
 
         Company company = companyRepository.findById(companyId).orElseThrow(
-                () -> new CompanyNotFoundException(companyId));
+                () -> new NotFoundException("Company",companyId));
 
         Location newLocation = Location.builder()
                                        .name(request.name())
@@ -87,12 +86,12 @@ public class LocationService {
         Integer companyId = authService.getCompanyIdFromContext();
 
         return locationRepository.findByIdAndCompanyId(locationId, companyId)
-                                 .orElseThrow(() -> new LocationNotFoundException(locationId));
+                                 .orElseThrow(() -> new NotFoundException("Location",locationId));
     }
 
     private void validateRequest(@Valid LocationRequest request) {
         if (locationRepository.existsByName(request.name())) {
-            throw new DuplicatedLocationException(request.name());
+            throw new DuplicatedException("Location", request.name());
         }
     }
 }

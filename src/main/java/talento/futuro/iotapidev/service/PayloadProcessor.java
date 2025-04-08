@@ -77,11 +77,13 @@ public class PayloadProcessor {
         }
     }
 
-    private void extractMeasurements(JsonNode dataArray, Sensor sensor) {
+    private void extractMeasurements(JsonNode dataArray, Sensor sensor) throws IllegalArgumentException {
         for (JsonNode measurement : dataArray) {
 
             JsonNode datetime = measurement.get("datetime");
-
+            if (datetime == null || datetime.isNull()) {
+                throw new IllegalArgumentException();
+            }
             SensorData sensorData = new SensorData();
             sensorData.setTimestamp(datetime.asLong());
             sensorData.setData(measurement);

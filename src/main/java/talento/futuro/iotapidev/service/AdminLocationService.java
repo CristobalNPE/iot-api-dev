@@ -9,8 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import talento.futuro.iotapidev.dto.LocationAdminRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
-import talento.futuro.iotapidev.exception.CompanyNotFoundException;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.LocationMapper;
 import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.model.Location;
@@ -34,10 +33,10 @@ public class AdminLocationService {
 
     public LocationResponse createLocation(@Valid LocationAdminRequest request) {
         if (request.companyId() == null) {
-            throw new CompanyNotFoundException(null);
+            throw new NotFoundException("Company", null);
         }
         Company company = companyRepository.findById(request.companyId())
-                                           .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
+                                           .orElseThrow(() -> new NotFoundException("Company", request.companyId()));
 
         Location newLocation = Location
                 .builder()
@@ -56,18 +55,18 @@ public class AdminLocationService {
     public LocationResponse findLocationById(Integer locationId) {
         return locationRepository.findById(locationId)
                                  .map(locationMapper::toLocationResponse)
-                                 .orElseThrow(() -> new LocationNotFoundException(locationId));
+                                 .orElseThrow(() -> new NotFoundException("Location",locationId));
     }
 
     public LocationResponse updateLocation(Integer locationId, @Valid LocationAdminRequest request) {
         if (request.companyId() == null) {
-            throw new CompanyNotFoundException(null);
+            throw new NotFoundException("Company", null);
         }
         Company company = companyRepository.findById(request.companyId())
-                                           .orElseThrow(() -> new CompanyNotFoundException(request.companyId()));
+                                           .orElseThrow(() -> new NotFoundException("Company", request.companyId()));
 
         Location location = locationRepository.findById(locationId)
-                                              .orElseThrow(() -> new LocationNotFoundException(locationId));
+                                              .orElseThrow(() -> new NotFoundException("Location", locationId));
 
         location.setCompany(company);
         location.setName(request.name());
@@ -80,7 +79,7 @@ public class AdminLocationService {
 
     public void deleteLocation(Integer locationId) {
         if (!locationRepository.existsById(locationId)) {
-            throw new LocationNotFoundException(locationId);
+            throw new NotFoundException("Location", locationId);
         }
         locationRepository.deleteById(locationId);
     }

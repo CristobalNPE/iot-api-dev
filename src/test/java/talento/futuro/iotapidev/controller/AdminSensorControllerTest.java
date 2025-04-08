@@ -13,8 +13,7 @@ import talento.futuro.iotapidev.constants.ApiBase;
 import talento.futuro.iotapidev.constants.ApiPath;
 import talento.futuro.iotapidev.dto.SensorRequest;
 import talento.futuro.iotapidev.dto.SensorResponse;
-import talento.futuro.iotapidev.exception.LocationNotFoundException;
-import talento.futuro.iotapidev.exception.SensorNotFoundException;
+import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.service.AdminSensorService;
 
 import java.util.List;
@@ -72,7 +71,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
 
         int locationId = 999;
         SensorRequest request = createDefaultSensorRequest(locationId, "Sensor 1");
-        when(adminSensorService.createSensor(any(SensorRequest.class))).thenThrow(new LocationNotFoundException(locationId));
+        when(adminSensorService.createSensor(any(SensorRequest.class))).thenThrow(new NotFoundException("Location",locationId));
 
         mockMvc.perform(post(ADMIN_SENSOR_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +136,7 @@ class AdminSensorControllerTest extends BaseRestDocsControllerTest {
     @Test
     void getSensorById_NotFound() throws Exception {
         int sensorId = 9999;
-        when(adminSensorService.findSensorById(sensorId)).thenThrow(new SensorNotFoundException(sensorId));
+        when(adminSensorService.findSensorById(sensorId)).thenThrow(new NotFoundException("Sensor",sensorId));
 
         mockMvc.perform(get(ADMIN_SENSOR_PATH + "/{id}", sensorId)
                        .accept(MediaType.APPLICATION_JSON))
