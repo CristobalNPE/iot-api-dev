@@ -2,6 +2,10 @@ package talento.futuro.iotapidev.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -15,7 +19,6 @@ import talento.futuro.iotapidev.service.CompanyService;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static talento.futuro.iotapidev.docs.CompanyDocumentation.*;
 import static talento.futuro.iotapidev.docs.SharedDocumentation.Errors.domainErrorResponseFields;
+import static talento.futuro.iotapidev.docs.SharedDocumentation.Pagination.getPageResponseFields;
 import static talento.futuro.iotapidev.utils.CompanyTestDataFactory.createCompanyResponse;
 import static talento.futuro.iotapidev.utils.CompanyTestDataFactory.createDefaultCompanyResponseList;
 import static talento.futuro.iotapidev.utils.TestUtils.generateApiKeyForTests;
@@ -65,22 +69,26 @@ class AdminCompanyControllerTest extends BaseRestDocsControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void getAllCompanies() throws Exception { //TODO: change when we have pagination
+    void getAllCompanies() throws Exception {
 
-        List<CompanyResponse> expectedResponse = createDefaultCompanyResponseList();
-        when(companyService.getAll()).thenReturn(expectedResponse);
+        Pageable requestedPageable = PageRequest.of(0, 20);
+        List<CompanyResponse> companiesList = createDefaultCompanyResponseList();
+        Page<CompanyResponse> expectedPage = new PageImpl<>(companiesList, requestedPageable, companiesList.size());
+
+        when(companyService.getAll(any(Pageable.class))).thenReturn(expectedPage);
 
         mockMvc.perform(get(ADMIN_COMPANY_PATH)
                        .accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", hasSize(expectedResponse.size())))
-               .andExpect(jsonPath("$[0].id").value(expectedResponse.get(0).id()))
-               .andExpect(jsonPath("$[0].name").value(expectedResponse.get(0).name()))
-               .andExpect(jsonPath("$[0].apiKey").value(expectedResponse.get(0).apiKey()))
-               .andExpect(jsonPath("$[1].name").value(expectedResponse.get(1).name()))
+               .andExpect(jsonPath("$.content[0].id").value(expectedPage.getContent().get(0).id()))
+               .andExpect(jsonPath("$.content[0].name").value(expectedPage.getContent().get(0).name()))
+               .andExpect(jsonPath("$.content[0].apiKey").value(expectedPage.getContent().get(0).apiKey()))
+               .andExpect(jsonPath("$.content[1].name").value(expectedPage.getContent().get(1).name()))
                .andDo(document("admin/get-all-companies",
-                       responseFields(companyListResponseFields)
-               ));
+                       responseFields(getPageResponseFields(
+                               "Lista paginada de compañías registradas en el sistema.", companyListResponseFieldsPaginated)
+                       ))
+               );
     }
 
     @Test
