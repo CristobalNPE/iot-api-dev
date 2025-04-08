@@ -28,11 +28,10 @@ public class CompanyDocumentation {
             fieldWithPath("[].apiKey").description("API Key de la compañía.").type(JsonFieldType.STRING)
     };
 
-    //TODO: if page:
-//    private final FieldDescriptor[] companyPageResponseFields = new FieldDescriptor[]{
-//            fieldWithPath("content[]").description("Array JSON que contiene todas las compañías obtenibles."),
-//            fieldWithPath("content[].id").description("ID de la compañía."),
-//            fieldWithPath("content[].name").description("Nombre de la compañía."),
-//            fieldWithPath("content[].apiKey").description("API Key de la compañía.")
-//    }; // together with paginationResponseFields
+    public static final FieldDescriptor[] companyListResponseFieldsPaginated = new FieldDescriptor[]{
+            fieldWithPath("content[]").description("Array JSON que contiene todas las compañías obtenibles."),
+            fieldWithPath("content[].id").description("ID de la compañía."),
+            fieldWithPath("content[].name").description("Nombre de la compañía."),
+            fieldWithPath("content[].apiKey").description("API Key de la compañía.")
+    };
 }
