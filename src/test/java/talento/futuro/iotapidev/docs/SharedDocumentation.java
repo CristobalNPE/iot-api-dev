@@ -17,10 +17,8 @@ public class SharedDocumentation {
 
         public static final FieldDescriptor[] domainErrorResponseFields = {
                 fieldWithPath("timestamp").description("La fecha y hora en que se generó el error."),
-                fieldWithPath("message").description("El mensaje descriptivo del error.")
-
-                //
-//            fieldWithPath("status").description("El código de estado HTTP."),
+                fieldWithPath("message").description("El mensaje descriptivo del error."),
+                fieldWithPath("status").description("El código de estado HTTP.")
 //            fieldWithPath("error").description("El nombre del error."),
 //            fieldWithPath("path").description("La ruta a la que se hizo la solicitud."),
 //            fieldWithPath("details").description("Un objeto JSON que contiene detalles adicionales sobre el error.")
@@ -88,6 +86,5 @@ public class SharedDocumentation {
         };
 
 
-
-}
+    }
 }
