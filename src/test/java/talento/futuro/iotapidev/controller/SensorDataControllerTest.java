@@ -1,6 +1,5 @@
 package talento.futuro.iotapidev.controller;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Page;
@@ -74,9 +73,7 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
                ));
     }
 
-    //todo: need exception handling
     @Test
-    @Disabled // todo: enable when ready
     void registerPayload_InvalidSensorApiKey() throws Exception {
         String invalidSensorApiKey = "invalid-sensor-key";
 
@@ -88,7 +85,7 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
         mockMvc.perform(post(SENSOR_DATA_PATH)
                        .contentType(MediaType.APPLICATION_JSON)
                        .content(objectMapper.writeValueAsString(payload)))
-               .andExpect(status().isBadRequest())
+               .andExpect(status().isUnauthorized())
                .andDo(document("sensor-data/register-payload-invalid-key",
                        requestFields(payloadRequestFields),
                        responseFields(domainErrorResponseFields)
@@ -96,7 +93,6 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
     }
 
     @Test
-    @Disabled // todo: enable when ready
     void registerPayload_InvalidJsonStructure() throws Exception {
         String invalidJson = """
                 {
@@ -110,7 +106,6 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
                        .content(invalidJson))
                .andExpect(status().isBadRequest())
                .andDo(document("sensor-data/register-payload-invalid-json"));
-        //todo: if we get this in the golbalExceptionHandler, document it with responseFields
     }
 
     private final ParameterDescriptor[] searchSpecificParams = {
@@ -209,7 +204,7 @@ class SensorDataControllerTest extends BaseRestDocsControllerTest {
         int sensorIdToDelete = 99;
 
 
-        doThrow(new NotFoundException("Sensor",sensorIdToDelete))
+        doThrow(new NotFoundException("Sensor", sensorIdToDelete))
                 .when(sensorDataService).deleteAllSensorData(eq(sensorIdToDelete));
 
         mockMvc.perform(delete(SENSOR_DATA_PATH + "/{sensorId}", sensorIdToDelete)
