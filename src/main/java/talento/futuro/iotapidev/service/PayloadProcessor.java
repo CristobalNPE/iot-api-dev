@@ -32,7 +32,7 @@ public class PayloadProcessor {
             String apiKey = payload.apiKey();
 
             Sensor sensor = sensorRepository.findByApiKey(apiKey)
-                    .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
+                                            .orElseThrow(() -> new InvalidSensorApiKeyException(apiKey));
 
             JsonNode dataArray = objectMapper.valueToTree(payload.jsonData());
 
@@ -58,10 +58,10 @@ public class PayloadProcessor {
             validatePayload(parsedPayload);
         } catch (MethodArgumentNotValidException e) {
             e.getBindingResult().getAllErrors().stream()
-                    .findFirst()
-                    .ifPresent(error ->
-                            log.error("Error processing JSON: {}", error.getDefaultMessage())
-                    );
+             .findFirst()
+             .ifPresent(error ->
+                     log.error("Error processing JSON: {}", error.getDefaultMessage())
+             );
             throw new InvalidJSONException(e);
         }
 
@@ -78,11 +78,15 @@ public class PayloadProcessor {
     }
 
     private void extractMeasurements(JsonNode dataArray, Sensor sensor) throws IllegalArgumentException {
+
         for (JsonNode measurement : dataArray) {
 
             JsonNode datetime = measurement.get("datetime");
-            if (datetime == null || datetime.isNull()) {
-                throw new IllegalArgumentException();
+
+            if (datetime == null || datetime.isNull() || !datetime.isNumber()) {
+                log.warn("🔸 Invalid 'datetime' field in payload for sensor [{}-ID{}], skipping...",
+                        sensor.getName(), sensor.getId());
+                continue;
             }
             SensorData sensorData = new SensorData();
             sensorData.setTimestamp(datetime.asLong());
