@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 @PropertySource("classpath:database.properties")
-@ComponentScan("talento.futuro.iotapidev")
 @Profile("!test")
 public class DataSourceConfig {
 
