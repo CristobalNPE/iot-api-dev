@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -12,6 +13,7 @@ import talento.futuro.iotapidev.repository.AdminRepository;
 
 @Slf4j
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 public class AdminUserInitializer {
 
