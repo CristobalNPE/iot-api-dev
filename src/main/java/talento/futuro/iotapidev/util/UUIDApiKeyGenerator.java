@@ -9,6 +9,8 @@ public class UUIDApiKeyGenerator implements ApiKeyGenerator {
 
     @Override
     public String generateApiKey() {
-        return UUID.randomUUID().toString().replace("-", "");
+        return UUID.randomUUID()
+                   .toString()
+                   .replace("-", "");
     }
 }

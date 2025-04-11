@@ -82,6 +82,13 @@ public class GlobalExceptionHandler {
                 new ErrorResponse("The requested URL was not found: " + ex.getRequestURL(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()));
     }
 
+    @ExceptionHandler(InvalidMessageTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidMessageTypeException(InvalidMessageTypeException ex) {
+        log.warn("🟠 Invalid message type: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse("Invalid message type", HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAnyOtherException(Exception ex) {
         log.error("🔴 An unexpected error occurred processing request: {}", ex.getMessage(), ex);

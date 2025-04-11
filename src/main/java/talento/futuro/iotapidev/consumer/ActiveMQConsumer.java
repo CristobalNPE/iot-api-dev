@@ -1,6 +1,7 @@
 package talento.futuro.iotapidev.consumer;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.jms.Message;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
@@ -21,8 +22,7 @@ public class ActiveMQConsumer implements MessageConsumer {
 
     @Override
     @JmsListener(destination = "${app.activemq.queue.myQueue}")
-    public void consume(String message) {
-        log.info("\n📧 ActiveMQ Message received: \n{}", message);
+    public void consume(Message message) {
         payloadProcessor.extractSensorData(message);
     }
 }
