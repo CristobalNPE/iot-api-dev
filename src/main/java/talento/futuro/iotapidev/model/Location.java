@@ -28,10 +28,10 @@ public class Location {
     @Column(name = "location_country", nullable = false)
     private String country;
 
-    @Column(name = "location_city")
+    @Column(name = "location_city", nullable = false)
     private String city;
 
-    @Column(name = "location_meta")
+    @Column(name = "location_meta", nullable = false)
     private String meta;
     
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
