@@ -26,10 +26,10 @@ public class Sensor {
     @Column(name = "sensor_name", nullable = false)
     private String name;
 
-    @Column(name = "sensor_category")
+    @Column(name = "sensor_category", nullable = false)
     private String category;
 
-    @Column(name = "sensor_meta")
+    @Column(name = "sensor_meta", nullable = false)
     private String meta;
 
     @Column(name = "sensor_api_key", nullable = false)
