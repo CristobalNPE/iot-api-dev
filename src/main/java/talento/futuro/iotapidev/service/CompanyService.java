@@ -15,8 +15,6 @@ import talento.futuro.iotapidev.model.Company;
 import talento.futuro.iotapidev.repository.CompanyRepository;
 import talento.futuro.iotapidev.util.ApiKeyGenerator;
 
-import java.util.List;
-
 @Service
 @Transactional
 @RequiredArgsConstructor

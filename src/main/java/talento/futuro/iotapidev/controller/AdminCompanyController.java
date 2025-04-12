@@ -12,8 +12,6 @@ import talento.futuro.iotapidev.dto.CompanyRequest;
 import talento.futuro.iotapidev.dto.CompanyResponse;
 import talento.futuro.iotapidev.service.CompanyService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(ApiBase.V1 + ApiPath.ADMIN + ApiPath.COMPANY)
 @RequiredArgsConstructor
