@@ -20,6 +20,9 @@ jobs:
       - name: Checkout Code 📝
         uses: actions/checkout@v4
 
+      - name: Make Maven wrapper executable 🔧
+        run: chmod +x ./mvnw
+
       - name: Set up JDK 21 ☕
         uses: actions/setup-java@v4
         with:
