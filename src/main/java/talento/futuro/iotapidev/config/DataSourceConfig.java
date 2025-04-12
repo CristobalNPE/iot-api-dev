@@ -2,8 +2,9 @@ package talento.futuro.iotapidev.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -11,22 +12,56 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 import java.net.URI;
 
+@Slf4j
 @Configuration
-@RequiredArgsConstructor
 @Profile("!test")
+@ConfigurationProperties(prefix = "app.datasource")
+@Setter
 public class DataSourceConfig {
 
-    @Value("${spring.datasource.url}")
-    private String datasourceUrl;
+    private String databaseUrl;
+    private String databaseUsername;
+    private String databasePassword;
 
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(convertPostgresUrlToJdbc(datasourceUrl));
+
+        String urlFromEnv = System.getenv("DATABASE_URL");
+        String effectiveDbUrl;
+
+        if (urlFromEnv != null && !urlFromEnv.isEmpty()) {
+            log.info("🔎 Database URL loaded from environment variable");
+            effectiveDbUrl = urlFromEnv;
+
+            if (!effectiveDbUrl.startsWith("jdbc:")) {
+                try {
+                    effectiveDbUrl = convertPostgresUrlToJdbc(effectiveDbUrl);
+                    log.info("🔁 Converted Postgres URL ({}) to JDBC URL -> {}", urlFromEnv, effectiveDbUrl);
+                } catch (Exception e) {
+                    log.error("🚫 Error converting DATABASE_URL", e);
+                    throw new RuntimeException("Invalid DATABASE_URL format");
+                }
+            }
+        } else {
+            log.info("🍃 Using DB config from application.properties");
+            effectiveDbUrl = databaseUrl;
+            config.setUsername(databaseUsername);
+            config.setPassword(databasePassword);
+        }
+
+
+        config.setJdbcUrl(effectiveDbUrl);
+        config.setDriverClassName("org.postgresql.Driver");
+
+        log.info("✅ Database connection configured with URL: {}",
+                effectiveDbUrl.replaceAll("password=\\w+", "password=****"));
+
         return new HikariDataSource(config);
     }
 
-    public static String convertPostgresUrlToJdbc(String postgresUrl) {
+    private String convertPostgresUrlToJdbc(String postgresUrl) {
+
         URI uri = URI.create(postgresUrl);
         String host = uri.getHost();
         int port = uri.getPort();
