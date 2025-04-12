@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - deploy
+      - main
     paths:
       - 'fly.toml'
       - 'src/main/java/talento/futuro/iotapidev/**'
