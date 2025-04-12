@@ -3,10 +3,6 @@ package talento.futuro.iotapidev.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.jms.BytesMessage;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.TextMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +12,6 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import talento.futuro.iotapidev.dto.Payload;
 import talento.futuro.iotapidev.exception.InvalidJSONException;
-import talento.futuro.iotapidev.exception.InvalidMessageTypeException;
 import talento.futuro.iotapidev.exception.InvalidSensorApiKeyException;
 import talento.futuro.iotapidev.model.Sensor;
 import talento.futuro.iotapidev.model.SensorData;
@@ -49,15 +44,16 @@ public class PayloadProcessor {
         }
     }
 
-    public void extractSensorData(Message message) {
+    /**
+     * Extracts sensor data from a given JSON string payload
+     * @param payload the JSON string
+     * @throws InvalidJSONException if the payload is not valid
+     */
+    public void extractSensorData(String payload) {
         Payload parsedPayload;
 
-        String messageString = processMessage(message);
-
-        log.info("\n📧 ActiveMQ Message received: \n{}", messageString);
-
         try {
-            parsedPayload = objectMapper.readValue(messageString, Payload.class);
+            parsedPayload = objectMapper.readValue(payload, Payload.class);
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON", e);
             throw new InvalidJSONException(e);
@@ -107,24 +103,4 @@ public class PayloadProcessor {
         }
     }
 
-    private String processMessage(Message message) {
-        try {
-            if (message instanceof TextMessage textMessage) {
-                log.info("Received text message: {}", textMessage.getText());
-                return textMessage.getText();
-            } else if (message instanceof BytesMessage bytesMessage) {
-                log.info("Received bytes message: {}", bytesMessage.getBodyLength());
-
-                byte[] data = new byte[(int) bytesMessage.getBodyLength()];
-                bytesMessage.readBytes(data);
-                return new String(data);
-            } else {
-                log.warn("Received message of unsupported type: {}", message.getClass().getName());
-                throw new InvalidMessageTypeException();
-            }
-        } catch (JMSException e) {
-            log.error("Error processing message", e);
-            throw new InvalidMessageTypeException();
-        }
-    }
 }

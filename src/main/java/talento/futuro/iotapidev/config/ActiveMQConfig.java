@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.support.converter.SimpleMessageConverter;
 
 @Configuration
 @EnableJms
@@ -24,5 +25,10 @@ public class ActiveMQConfig {
         factory.setSessionTransacted(true);
 
         return factory;
+    }
+
+    @Bean
+    public SimpleMessageConverter simpleMessageConverter() {
+        return new SimpleMessageConverter();
     }
 }

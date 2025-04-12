@@ -1,11 +1,14 @@
 package talento.futuro.iotapidev.consumer;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.converter.SimpleMessageConverter;
 import org.springframework.stereotype.Service;
+import talento.futuro.iotapidev.exception.InvalidMessageTypeException;
 import talento.futuro.iotapidev.service.PayloadProcessor;
 
 @Slf4j
@@ -14,15 +17,29 @@ import talento.futuro.iotapidev.service.PayloadProcessor;
 public class ActiveMQConsumer implements MessageConsumer {
 
     private final PayloadProcessor payloadProcessor;
+    private final SimpleMessageConverter messageConverter;
 
     @PostConstruct
     public void init() {
         log.info("ActiveMQConsumer Service has started!");
     }
 
-    @Override
     @JmsListener(destination = "${app.activemq.queue.myQueue}")
-    public void consume(Message message) {
+    public void getMessageFromQueue(Message message) {
+        String stringMessage;
+        try {
+            stringMessage = messageConverter.fromMessage(message).toString();
+        } catch (JMSException e) {
+            log.error("Error processing message", e);
+            throw new InvalidMessageTypeException();
+        }
+        process(stringMessage);
+    }
+
+    @Override
+    public void process(String message) {
+        log.info("\n📧 ActiveMQ Message received: \n{}", message);
         payloadProcessor.extractSensorData(message);
     }
+
 }
