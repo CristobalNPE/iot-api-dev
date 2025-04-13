@@ -18,7 +18,7 @@ public class ActiveMQConfig {
     private String concurrency;
 
     @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory (ConnectionFactory connectionFactory) {
+    public DefaultJmsListenerContainerFactory jmsTransactionalContainerFactory (ConnectionFactory connectionFactory) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setConcurrency(concurrency);

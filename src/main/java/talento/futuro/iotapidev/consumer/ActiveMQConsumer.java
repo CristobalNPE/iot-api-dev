@@ -26,7 +26,8 @@ public class ActiveMQConsumer implements MessageConsumer {
         log.info("ActiveMQConsumer Service has started!");
     }
 
-    @JmsListener(destination = "${app.activemq.queue.myQueue}")
+    @JmsListener(destination = "${app.activemq.queue.myQueue}",
+            containerFactory = "jmsTransactionalContainerFactory")
     public void getMessageFromQueue(Message message) {
         String stringMessage;
         try {
