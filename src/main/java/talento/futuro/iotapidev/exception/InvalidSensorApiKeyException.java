@@ -7,6 +7,9 @@ public class InvalidSensorApiKeyException extends RuntimeException {
     }
 
     private static String obscureApiKey(String apiKey) {
+        if (apiKey == null || apiKey.length() < 6) {
+            return "...";
+        }
         return apiKey.substring(0, 3) + "..." + apiKey.substring(apiKey.length() - 3);
     }
 
