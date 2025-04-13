@@ -89,8 +89,16 @@ public class GlobalExceptionHandler {
                 new ErrorResponse("Invalid message type", HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()));
     }
 
+    @ExceptionHandler(PayloadValidationException.class)
+    public ResponseEntity<ErrorResponse> handlePayloadValidationException(PayloadValidationException ex) {
+        log.warn("🟠 Payload validation failed: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse("Payload validation failed", HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAnyOtherException(Exception ex) {
+
         log.error("🔴 An unexpected error occurred processing request: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ErrorResponse("Unexpected internal server error",
