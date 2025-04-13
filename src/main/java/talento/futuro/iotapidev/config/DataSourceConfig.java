@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.net.URI;
@@ -30,7 +31,7 @@ public class DataSourceConfig {
         String urlFromEnv = System.getenv("DATABASE_URL");
         String effectiveDbUrl;
 
-        if (urlFromEnv != null && !urlFromEnv.isEmpty()) {
+        if (StringUtils.hasText(urlFromEnv)) {
             log.info("🔎 Database URL loaded from environment variable");
             effectiveDbUrl = urlFromEnv;
 
@@ -46,11 +47,11 @@ public class DataSourceConfig {
         } else {
             log.info("🍃 Using DB config from application.properties");
             effectiveDbUrl = databaseUrl;
-            config.setUsername(databaseUsername);
-            config.setPassword(databasePassword);
         }
 
 
+        config.setUsername(databaseUsername);
+        config.setPassword(databasePassword);
         config.setJdbcUrl(effectiveDbUrl);
         config.setDriverClassName("org.postgresql.Driver");
 
