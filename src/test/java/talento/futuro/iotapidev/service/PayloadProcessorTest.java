@@ -67,8 +67,6 @@ class PayloadProcessorTest {
     @Captor
     private ArgumentCaptor<Payload> payloadCaptor;
     @Captor
-    private ArgumentCaptor<SensorData> sensorDataCaptor;
-    @Captor
     private ArgumentCaptor<Errors> errorsCaptor;
 
     // test data
