@@ -110,12 +110,13 @@ public class PayloadProcessor {
     private String processMessage(Message message) {
         try {
             if (message instanceof TextMessage textMessage) {
-                log.info("Received text message: {}", textMessage.getText());
-                return textMessage.getText();
+                String messageText = textMessage.getText();
+                log.info("Received text message: {}", messageText);
+                return messageText;
             } else if (message instanceof BytesMessage bytesMessage) {
-                log.info("Received bytes message: {}", bytesMessage.getBodyLength());
-
-                byte[] data = new byte[(int) bytesMessage.getBodyLength()];
+                long bodyLength = bytesMessage.getBodyLength();
+                log.info("Received bytes message: {}", bodyLength);
+                byte[] data = new byte[(int) bodyLength];
                 bytesMessage.readBytes(data);
                 return new String(data);
             } else {
