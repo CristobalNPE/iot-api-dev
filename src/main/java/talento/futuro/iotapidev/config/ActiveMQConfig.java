@@ -16,12 +16,15 @@ public class ActiveMQConfig {
     @Value("${app.activemq.listener.concurrency}")
     private String concurrency;
 
+    @Value("${app.activemq.pub-sub-domain:false}")
+    private Boolean pubSubDomain;
+
     @Bean
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory (ConnectionFactory connectionFactory) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setConcurrency(concurrency);
-        factory.setPubSubDomain(true);
+        factory.setPubSubDomain(pubSubDomain);
         factory.setSessionTransacted(true);
 
         return factory;
