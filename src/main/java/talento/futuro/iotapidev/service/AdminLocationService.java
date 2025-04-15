@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import talento.futuro.iotapidev.dto.LocationAdminRequest;
+import talento.futuro.iotapidev.dto.LocationRequest;
 import talento.futuro.iotapidev.dto.LocationResponse;
+import talento.futuro.iotapidev.exception.DuplicatedException;
 import talento.futuro.iotapidev.exception.NotFoundException;
 import talento.futuro.iotapidev.mapper.LocationMapper;
 import talento.futuro.iotapidev.model.Company;
@@ -37,6 +39,7 @@ public class AdminLocationService {
         Company company = companyRepository.findById(request.companyId())
                                            .orElseThrow(() -> new NotFoundException("Company", request.companyId()));
 
+        validateRequest(request);
         Location newLocation = Location
                 .builder()
                 .company(company)
@@ -81,5 +84,11 @@ public class AdminLocationService {
             throw new NotFoundException("Location", locationId);
         }
         locationRepository.deleteById(locationId);
+    }
+    
+    private void validateRequest(@Valid LocationAdminRequest request) {
+        if (locationRepository.existsByNameForCompany(request.name(), request.companyId())) {
+            throw new DuplicatedException("Location", request.name());
+        }
     }
 }

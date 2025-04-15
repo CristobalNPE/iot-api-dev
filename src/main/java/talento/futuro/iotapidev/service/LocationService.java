@@ -87,7 +87,7 @@ public class LocationService {
     }
 
     private void validateRequest(@Valid LocationRequest request) {
-        if (locationRepository.existsByName(request.name())) {
+        if (locationRepository.existsByNameForCompany(request.name(), authService.getCompanyIdFromContext())) {
             throw new DuplicatedException("Location", request.name());
         }
     }
