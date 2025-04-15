@@ -21,7 +21,7 @@ public class ActiveMQConsumer implements MessageConsumer {
     }
 
     @Override
-    @JmsListener(destination = "${app.activemq.queue.myQueue}")
+    @JmsListener(destination = "${app.activemq.destination}")
     public void consume(Message message) {
         payloadProcessor.extractSensorData(message);
     }
