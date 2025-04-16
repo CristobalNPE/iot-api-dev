@@ -10,28 +10,46 @@ import java.util.Optional;
 
 public interface SensorRepository extends JpaRepository<Sensor, Integer> {
 
+	@Query("""
+			select s from Sensor s
+			join s.location l
+			where l.company.id = :companyId
+			""")
+	Page<Sensor> getAllSensorsForCompany(Integer companyId, Pageable pageable);
 
-    @Query("""
-            select s from Sensor s
-            join s.location l
-            where l.company.id = :companyId
-            """)
-    Page<Sensor> getAllSensorsForCompany(Integer companyId, Pageable pageable);
+	@Query("""
+			select s from Sensor s
+			join s.location l
+			where l.company.id = :companyId
+			and s.id = :sensorId
+			""")
+	Optional<Sensor> findSensorByIdForCompany(Integer sensorId, Integer companyId);
 
+	boolean existsByName(String name);
 
-    @Query("""
-            select s from Sensor s
-            join s.location l
-            where l.company.id = :companyId
-            and s.id = :sensorId
-            """)
-    Optional<Sensor> findSensorByIdForCompany(Integer sensorId, Integer companyId);
+	boolean existsByNameAndId(String name, Integer id);
 
-    boolean existsByName(String name);
+	@Query("""
+			select case
+				when count(s) > 0
+				then true
+				else false
+				end
+				from Sensor s join s.location l
+				where l.company.id = :companyId and s.name = :name
+			""")
+	boolean existsByNameForCompany(String name, Integer companyId);
 
+	Optional<Sensor> findByApiKey(String apiKey);
 
-    boolean existsByNameAndId(String name, Integer id);
-
-    Optional<Sensor> findByApiKey(String apiKey);
+	@Query("""
+			select case
+				when count(s) > 0
+				then true
+				else false
+				end
+			FROM Sensor s WHERE s.name = :name AND s.id <> :id
+			""")
+	boolean existsByNameAndIdNot(String name, Integer id);
 
 }

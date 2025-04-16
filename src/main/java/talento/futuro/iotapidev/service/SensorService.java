@@ -2,6 +2,7 @@ package talento.futuro.iotapidev.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,13 +67,13 @@ public class SensorService {
     public SensorResponse updateSensor(Integer id, @Valid SensorRequest request) {
 
         Location location = locationService.getLocationForCompany(request.locationId());
-
-        if (sensorRepository.existsByNameAndId(request.sensorName(), id)) {
-            throw new DuplicatedException("Sensor",request.sensorName());
-        }
-
+        
         Sensor sensorForCompany = getSensorForCompany(id);
-
+        
+        if (sensorRepository.existsByNameAndIdNot(request.sensorName(), id)) {
+        	throw new DuplicatedException("Sensor", request.sensorName());
+        }
+        
         sensorForCompany.setName(request.sensorName());
         sensorForCompany.setCategory(request.sensorCategory());
         sensorForCompany.setMeta(request.sensorMeta());
@@ -89,7 +90,7 @@ public class SensorService {
 
 
     private void validateRequest(@Valid SensorRequest request) {
-        if (sensorRepository.existsByName(request.sensorName())) {
+        if (sensorRepository.existsByNameForCompany(request.sensorName(), authService.getCompanyIdFromContext() )) {
             throw new DuplicatedException("Sensor", request.sensorName());
         }
     }
