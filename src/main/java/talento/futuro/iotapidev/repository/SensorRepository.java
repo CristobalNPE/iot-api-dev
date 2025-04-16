@@ -48,8 +48,9 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer> {
 				then true
 				else false
 				end
-			FROM Sensor s WHERE s.name = :name AND s.id <> :id
+			FROM Sensor s join s.location l 
+			WHERE s.name = :name AND s.id <> :sensorId AND l.company.id = :companyId
 			""")
-	boolean existsByNameAndIdNot(String name, Integer id);
+	boolean existsByNameAndIdNot(String name, Integer sensorId, Integer companyId);
 
 }

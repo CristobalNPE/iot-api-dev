@@ -70,7 +70,7 @@ public class SensorService {
         
         Sensor sensorForCompany = getSensorForCompany(id);
         
-        if (sensorRepository.existsByNameAndIdNot(request.sensorName(), id)) {
+        if (sensorRepository.existsByNameAndIdNot(request.sensorName(), id, authService.getCompanyIdFromContext())) {
         	throw new DuplicatedException("Sensor", request.sensorName());
         }
         
