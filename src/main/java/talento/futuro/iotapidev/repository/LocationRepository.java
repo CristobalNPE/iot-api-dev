@@ -24,5 +24,17 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     	""")
     boolean existsByNameForCompany(String name, Integer companyId);
     
+	@Query("""
+			select case
+				when count(l) > 0
+				then true
+				else false
+				end
+			FROM Location l 
+			WHERE l.name = :name AND l.id <> :locationId AND l.company.id = :companyId
+			""")
+	boolean existsByNameAndIdNot(String name, Integer locationId, Integer companyId);
+
+    
 }
 

@@ -36,13 +36,15 @@ public class LocationService {
     }
 
     public LocationResponse createLocationForCurrentCompany(@Valid LocationRequest request) {
-        validateRequest(request);
+       
 
         Integer companyId = authService.getCompanyIdFromContext();
 
         Company company = companyRepository.findById(companyId).orElseThrow(
                 () -> new NotFoundException("Company",companyId));
 
+        validateRequest(request);
+        
         Location newLocation = Location.builder()
                                        .name(request.name())
                                        .city(request.city())
@@ -60,6 +62,10 @@ public class LocationService {
 
         Location location = getLocationForCompany(locationId);
 
+        if (locationRepository.existsByNameAndIdNot(request.name(), locationId, authService.getCompanyIdFromContext())) {
+        	throw new DuplicatedException("Location", request.name());
+        }
+        
         location.setName(request.name());
         location.setCity(request.city());
         location.setCountry(request.country());
