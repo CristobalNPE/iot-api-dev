@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-
+*.http
 !.env.example
 *.env
 digest.txt
