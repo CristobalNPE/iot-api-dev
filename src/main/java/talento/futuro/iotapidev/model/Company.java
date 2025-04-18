@@ -26,5 +26,6 @@ public class Company {
     private String apiKey;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Location> locations = new ArrayList<>();
 }

@@ -36,5 +36,6 @@ public class Sensor {
     private String apiKey;
 
     @OneToMany(mappedBy = "sensor", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<SensorData> sensorData = new ArrayList<>();
 }

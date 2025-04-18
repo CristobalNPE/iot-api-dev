@@ -35,6 +35,7 @@ public class Location {
     private String meta;
     
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Sensor> sensors = new ArrayList<>();
 
 }
